@@ -58,7 +58,7 @@ X-Spam-Flag: YES
 X-Spam-Level: 96
 ```
 ### Performance
-on my little mail server (Intel(R) Atom(TM) CPU D2550   @ 1.86GHz) is extraordinarily fast, expecially in comparison with SpamAssassin
+on my little mail server (Intel(R) Atom(TM) CPU D2550   @ 1.86GHz) is extraordinarily fast, expecially in comparison with SpamAssassin (that does a lot more checks, though):
 ```console
 $ time cat .talispam/spam/00460.8996dc28ab56dd7b6f35b956deceaf22 | spamassassin | head -n 5
 From ilug-admin@linux.ie  Wed Sep 25 10:29:22 2002
