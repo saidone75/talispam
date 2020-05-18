@@ -33,7 +33,7 @@ clone configuration from [talispam-config](https://github.com/saidone75/talispam
 $ cd ~
 $ git clone https://github.com/saidone75/talispam-config.git .talispam
 ```
-(WARNING: contains a quite big spam/ham corpus, you may want to train the filter against your own collections)
+(WARNING: contains a quite big spam/ham training corpus, you may want to train the filter against your own collections)
 
 train bayesian classifier:
 ```console
