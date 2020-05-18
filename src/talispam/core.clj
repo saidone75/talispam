@@ -1,20 +1,14 @@
 (ns talispam.core
   (:gen-class))
 
+(def version "0.1.0-SNAPSHOT")
+
 (require '[clojure.string :as s]
          '[talispam.config :as c]
          '[talispam.db :as db]
          '[talispam.dictionary :as dict]
          '[talispam.filter :as f]
          '[clojure.tools.cli :refer [parse-opts]])
-
-(->> "project.clj"
-     slurp
-     read-string
-     (drop 2)
-     (cons :version)
-     (apply hash-map)
-     (def project))
 
 ;; init dictionary if required
 (if (:use (:dictionary c/config)) (dict/init-dictionary))
@@ -23,16 +17,16 @@
   [["-h" "--help"]])
 
 (defn- usage [options-summary]
-  (->> ["Spamulet"
+  (->> [(str "TaliSpam " version)
         ""
-        "Usage: spamulet [options] action"
+        "Usage: talispam [options] action"
         ""
         "Options:"
         options-summary
         ""
         "Actions:"
         "  score    print ham/spam score for stdin"
-        "  learn    train spamulet classifier"]
+        "  learn    train talispam classifier"]
        (s/join \newline)))
 
 (defn- error-msg [errors]
@@ -65,13 +59,14 @@
   (println "done"))
 
 (defn- format-score [score]
-  (Math/round (* 100 score)))
+  ;; type hint needed for GraalVM
+  (Math/round ^Float (* 100 score)))
 
 (defn- add-headers [message score]
   (str
    "X-Spam-Checker-Version: "
    "TaliSpam "
-   (:version project)
+   version
    " on "
    (.getHostName (java.net.InetAddress/getLocalHost))
    "\r\n"
@@ -86,7 +81,7 @@
 ;; classify stdin
 (defn- classify [in & [print-score]]
   (if (not (db/exists-db))
-    (exit 1 "classifier db not found, see spamulet -h"))
+    (exit 1 "classifier db not found, see talispam -h"))
   (db/read-db)
   (let [in (slurp in)
         score (format-score (f/score in))]
