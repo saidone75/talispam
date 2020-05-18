@@ -8,10 +8,8 @@
          '[talispam.db :as db]
          '[talispam.dictionary :as dict]
          '[talispam.filter :as f]
+         '[immuconf.config :as immu]
          '[clojure.tools.cli :refer [parse-opts]])
-
-;; init dictionary if required
-(if (:use (:dictionary c/config)) (dict/init-dictionary))
 
 (def cli-options
   [["-h" "--help"]])
@@ -90,6 +88,8 @@
       (println (add-headers in score)))))
 
 (defn -main [& args]
+  (alter-var-root #'c/config (constantly (immu/load (str (System/getProperty "user.home") "/" ".talispam/talispam.cfg.edn"))))
+  (if (:use (:dictionary c/config)) (dict/init-dictionary))
   (let [{:keys [action options exit-message ok?]} (validate-args args)]
     (if exit-message
       (exit (if ok? 0 1) exit-message)
