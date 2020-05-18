@@ -84,3 +84,7 @@ user    0m0.299s
 sys     0m0.071s
 ```
 
+## License
+Copyright (c) 2020 Saidone
+
+Distributed under the MIT License
