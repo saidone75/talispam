@@ -28,7 +28,7 @@ Build on Server(pid: 31266, port: 40987)
 ```
 and copy the executable binary (target/talispam) somewhere in your path
 ### Configuration
-clone configuration from [talispam-config](https://github.com/saidone75/talispam-config) on your ~/.talispam folder:
+clone the sample configuration from [talispam-config](https://github.com/saidone75/talispam-config) on your ~/.talispam folder:
 ```console
 $ cd ~
 $ git clone https://github.com/saidone75/talispam-config.git .talispam
