@@ -52,7 +52,8 @@ $ cat .talispam/spam/00460.8996dc28ab56dd7b6f35b956deceaf22 | talispam score
 ### Compatibility
 I imagined it as a drop-in replacement for SpamAssassin on my personal mail server: invoked by procmail without arguments will add the same spam identification header and return the message to stdout:
 ```console
-$ cat .talispam/spam/00460.8996dc28ab56dd7b6f35b956deceaf22 | talispam | head -n 3
+$ cat .talispam/spam/00460.8996dc28ab56dd7b6f35b956deceaf22 | talispam | head -n 4
+From ilug-admin@linux.ie  Wed Sep 25 10:29:22 2002
 X-Spam-Checker-Version: TaliSpam 0.1.0-SNAPSHOT on kugelmass
 X-Spam-Flag: YES
 X-Spam-Level: 96
@@ -71,13 +72,14 @@ real    0m7.332s
 user    0m7.170s
 sys     0m0.156s
 $ time cat .talispam/spam/00460.8996dc28ab56dd7b6f35b956deceaf22 | talispam | head -n 5
+From ilug-admin@linux.ie  Wed Sep 25 10:29:22 2002
 X-Spam-Checker-Version: TaliSpam 0.1.0-SNAPSHOT on kugelmass
 X-Spam-Flag: YES
 X-Spam-Level: 96
-From ilug-admin@linux.ie  Wed Sep 25 10:29:22 2002
 Return-Path: <ilug-admin@linux.ie>
 
-real    0m0.191s
-user    0m0.161s
-sys     0m0.062s
+real    0m0.340s
+user    0m0.299s
+sys     0m0.071s
 ```
+
