@@ -61,20 +61,23 @@
   (Math/round ^Float (* 100 score)))
 
 (defn- add-headers [message score]
-  (str
-   "X-Spam-Checker-Version: "
-   "TaliSpam "
-   version
-   " on "
-   (.getHostName (java.net.InetAddress/getLocalHost))
-   "\r\n"
-   "X-Spam-Flag: "
-   (if (> score 60) "YES")
-   "\r\n"
-   "X-Spam-Level: "
-   score
-   "\r\n"
-   message))
+  (let [message (s/split-lines message)]
+    (str
+     (first message)
+     "\r\n"
+     "X-Spam-Checker-Version: "
+     "TaliSpam "
+     version
+     " on "
+     (.getHostName (java.net.InetAddress/getLocalHost))
+     "\r\n"
+     "X-Spam-Flag: "
+     (if (> score 60) "YES")
+     "\r\n"
+     "X-Spam-Level: "
+     score
+     "\r\n"
+     (s/join \newline (rest message)))))
 
 ;; classify stdin
 (defn- classify [in & [print-score]]
