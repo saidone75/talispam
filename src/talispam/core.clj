@@ -8,6 +8,7 @@
          '[talispam.db :as db]
          '[talispam.dictionary :as dict]
          '[talispam.filter :as f]
+         '[talispam.utils :as utils]
          '[immuconf.config :as immu]
          '[clojure.tools.cli :refer [parse-opts]])
 
@@ -60,25 +61,6 @@
   ;; type hint needed for GraalVM
   (Math/round ^Float (* 100 score)))
 
-(defn- add-headers [message score]
-  (let [message (s/split-lines message)]
-    (str
-     (first message)
-     "\r\n"
-     "X-Spam-Checker-Version: "
-     "TaliSpam "
-     version
-     " on "
-     (.getHostName (java.net.InetAddress/getLocalHost))
-     "\r\n"
-     "X-Spam-Flag: "
-     (if (> score 60) "YES")
-     "\r\n"
-     "X-Spam-Level: "
-     score
-     "\r\n"
-     (s/join \newline (rest message)))))
-
 ;; classify stdin
 (defn- classify [in & [print-score]]
   (if (not (db/exists-db))
@@ -88,17 +70,20 @@
         score (format-score (f/score in))]
     (if print-score
       (println score)
-      (println (add-headers in score)))))
+      (println (utils/add-headers in score)))))
 
 (defn -main [& args]
+  ;; load configuration
   (let [config-file (str (System/getProperty "user.home") "/" ".talispam/talispam.cfg.edn")]
+    ;; check if config file exists
     (if (not (.exists (clojure.java.io/file config-file)))
       (exit 1 (str "config file not found on " config-file))
       ;; read config file
       (try
         (alter-var-root #'c/config (constantly (immu/load (str (System/getProperty "user.home") "/" ".talispam/talispam.cfg.edn"))))
-        (catch Exception e (exit 1 (.getMessage e)))))
-    )
+        ;; exit on config file errors
+        (catch Exception e (exit 1 (.getMessage e))))))
+  
   ;; build dictionary if needed
   (if (:use (:dictionary c/config)) (dict/init-dictionary))
   
