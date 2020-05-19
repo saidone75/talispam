@@ -91,8 +91,11 @@
       (println (add-headers in score)))))
 
 (defn -main [& args]
+  ;; read config file
   (alter-var-root #'c/config (constantly (immu/load (str (System/getProperty "user.home") "/" ".talispam/talispam.cfg.edn"))))
+  ;; build dictionary if needed
   (if (:use (:dictionary c/config)) (dict/init-dictionary))
+  
   (let [{:keys [action options exit-message ok?]} (validate-args args)]
     (if exit-message
       (exit (if ok? 0 1) exit-message)

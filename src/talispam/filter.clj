@@ -74,24 +74,20 @@
     (/ (+ (- 1 h) s) 2.0)))
 
 ;; ham and spam corpus from training
-(defn- spam-corpus []
+(defn- corpus [type]
   (reduce
    #(concat %1 (drop 1 (file-seq (clojure.java.io/file (str (System/getProperty "user.home") "/" %2)))))
    []
-   (:spam-folders (:training-corpus c/config))))
-
-(defn- ham-corpus []
-  (reduce
-   #(concat %1 (drop 1 (file-seq (clojure.java.io/file (str (System/getProperty "user.home") "/" %2)))))
-   []
-   (:ham-folders (:training-corpus c/config))))
+   (if (= 'ham type)
+     (:ham-folders (:training-corpus c/config))
+     (:spam-folders (:training-corpus c/config)))))
 
 ;; build a new classifier db
 (defn learn []
   (db/clear-db)
   (doall (map
           #(train (slurp %) 'ham)
-          (ham-corpus)))
+          (corpus 'ham)))
   (doall (map
           #(train (slurp %) 'spam)
-          (spam-corpus))))
+          (corpus 'spam))))
