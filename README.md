@@ -5,7 +5,7 @@ a talispam (or spamulet) a software held to act as a charm to avert spam and bri
 ### Build
 get the sources:
 ```console
-$ git clone https://github.com/saidone75/talispam.git
+$ git clone https://github.com/saidone75/talispam.git -b v0.1.0
 ```
 produce an uberjar with leiningen:
 ```console
