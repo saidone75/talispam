@@ -2,3 +2,5 @@
   (:gen-class))
 
 (def config {})
+
+(def version nil)

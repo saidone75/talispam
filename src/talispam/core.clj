@@ -1,8 +1,6 @@
 (ns talispam.core
   (:gen-class))
 
-(def version "0.1.0-SNAPSHOT")
-
 (require '[clojure.string :as s]
          '[talispam.config :as c]
          '[talispam.db :as db]
@@ -16,7 +14,7 @@
   [["-h" "--help"]])
 
 (defn- usage [options-summary]
-  (->> [(str "TaliSpam " version)
+  (->> [(str "TaliSpam " c/version)
         ""
         "Usage: talispam [options] action"
         ""
@@ -73,6 +71,10 @@
       (println (utils/add-headers in score)))))
 
 (defn -main [& args]
+  ;; set version string
+  ;; would be nice to read it from project.clj
+  (alter-var-root #'c/version (constantly "0.1.0-SNAPSHOT"))
+  
   ;; load configuration
   (let [config-file (str (System/getProperty "user.home") "/" ".talispam/talispam.cfg.edn")]
     ;; check if config file exists
