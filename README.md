@@ -31,7 +31,7 @@ and copy the executable binary (target/talispam) somewhere in your path
 clone the sample configuration from [talispam-config](https://github.com/saidone75/talispam-config) on your ~/.talispam folder:
 ```console
 $ cd ~
-$ git clone https://github.com/saidone75/talispam-config.git .talispam
+$ git clone https://github.com/saidone75/talispam-config.git -b v0.1.0 .talispam
 ```
 (WARNING: contains a quite big spam/ham training corpus, you may want to train the filter against your own collections)
 
