@@ -4,7 +4,8 @@
 (require '[clojure.string :as s]
          '[talispam.config :as c]
          '[talispam.db :as db]
-         '[talispam.dictionary :as dict])
+         '[talispam.dictionary :as dict]
+         '[talispam.corpus :as corpus])
 
 ;; mostly based on http://www.gigamonkeys.com/book/practical-a-spam-filter.html
 
@@ -74,20 +75,13 @@
     (/ (+ (- 1 h) s) 2.0)))
 
 ;; ham and spam corpus from training
-(defn- corpus [type]
-  (reduce
-   #(concat %1 (drop 1 (file-seq (clojure.java.io/file (str (System/getProperty "user.home") "/" %2)))))
-   []
-   (if (= 'ham type)
-     (:ham-folders (:training-corpus c/config))
-     (:spam-folders (:training-corpus c/config)))))
 
 ;; build a new classifier db
 (defn learn []
   (db/clear-db)
   (doall (map
-          #(train (slurp %) 'ham)
-          (corpus 'ham)))
+          #(train % 'ham)
+          (corpus/ham)))
   (doall (map
-          #(train (slurp %) 'spam)
-          (corpus 'spam))))
+          #(train % 'spam)
+          (corpus/spam))))
