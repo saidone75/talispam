@@ -19,7 +19,7 @@
      (if (> score 60) "YES")
      "\r\n"
      "X-Spam-Level: "
-     score
+     (str score "/100")
      "\r\n"
      (s/join \newline (rest message)))))
 

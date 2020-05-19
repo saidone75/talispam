@@ -73,7 +73,7 @@
 (defn -main [& args]
   ;; set version string
   ;; would be nice to read it from project.clj
-  (alter-var-root #'c/version (constantly "0.1.0-SNAPSHOT"))
+  (alter-var-root #'c/version (constantly "0.1.0"))
   
   ;; load configuration
   (let [config-file (str (System/getProperty "user.home") "/" ".talispam/talispam.cfg.edn")]
