@@ -63,7 +63,9 @@
 (defn- classify [in & [print-score]]
   (if (not (db/exists-db))
     (exit 1 "classifier db not found, see talispam -h"))
-  (db/read-db)
+  (try
+    (db/load-db)
+    (catch Exception e (exit 1 "error loading classifier db")))
   (let [in (slurp in)
         score (format-score (f/score in))]
     (if print-score
@@ -76,18 +78,15 @@
   (alter-var-root #'c/version (constantly "0.2.0-SNAPSHOT"))
   
   ;; load configuration
-  (let [config-file (str (System/getProperty "user.home") "/" ".talispam/talispam.cfg.edn")]
-    ;; check if config file exists
-    (if (not (.exists (clojure.java.io/file config-file)))
-      (exit 1 (str "config file not found on " config-file))
-      ;; read config file
-      (try
-        (alter-var-root #'c/config (constantly (immu/load (str (System/getProperty "user.home") "/" ".talispam/talispam.cfg.edn"))))
-        ;; exit on config file errors
-        (catch Exception e (exit 1 (.getMessage e))))))
+  (try
+    (alter-var-root #'c/config (constantly (immu/load (str (System/getProperty "user.home") "/" ".talispam/talispam.cfg.edn"))))
+    (catch Exception e (exit 1 (.getMessage e))))
   
-  ;; build dictionary if needed
-  (if (:use (:dictionary c/config)) (dict/init-dictionary))
+  ;; load dictionary if needed
+  (if (:use (:dictionary c/config))
+    (try
+      (dict/load-dictionary!)
+      (catch Exception e (exit 1 (.getMessage e)))))
   
   (let [{:keys [action options exit-message ok?]} (validate-args args)]
     (if exit-message

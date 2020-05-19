@@ -16,7 +16,7 @@
              (re-seq #"\w{3,}")
              (map #(.toLowerCase ^String %)))]
     (if (:use (:dictionary c/config))
-      (filter #(contains? @dict/dictionary (.toLowerCase ^String %)) words)
+      (filter #(contains? @dict/dictionary %) words)
       words)))
 
 ;; increment ham/spam counter for a given word
