@@ -1,5 +1,5 @@
 # talispam
-a talispam (or spamulet) a software held to act as a charm to avert spam and bring good messages
+a talispam (or spamulet) is a program held to act as a charm to avert spam and bring good messages
 
 ## Very quick roundtrip
 ### Build
