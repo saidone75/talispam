@@ -91,8 +91,14 @@
       (println (add-headers in score)))))
 
 (defn -main [& args]
-  ;; read config file
-  (alter-var-root #'c/config (constantly (immu/load (str (System/getProperty "user.home") "/" ".talispam/talispam.cfg.edn"))))
+  (let [config-file (str (System/getProperty "user.home") "/" ".talispam/talispam.cfg.edn")]
+    (if (not (.exists (clojure.java.io/file config-file)))
+      (exit 1 (str "config file not found on " config-file))
+      ;; read config file
+      (try
+        (alter-var-root #'c/config (constantly (immu/load (str (System/getProperty "user.home") "/" ".talispam/talispam.cfg.edn"))))
+        (catch Exception e (exit 1 (.getMessage e)))))
+    )
   ;; build dictionary if needed
   (if (:use (:dictionary c/config)) (dict/init-dictionary))
   
