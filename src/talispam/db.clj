@@ -16,13 +16,10 @@
 
 (defn exists-db []
   (.exists (clojure.java.io/file
-            (str
-             (System/getProperty "user.home")
-             "/"
-             (:location (:filter-db c/config))))))
+            (:location (:filter-db @c/config)))))
 
 (defn load-db []
-  (with-open [i (clojure.java.io/input-stream (str (System/getProperty "user.home") "/" (:location (:filter-db c/config))))]
+  (with-open [i (clojure.java.io/input-stream (:location (:filter-db @c/config)))]
     (let [reader (transit/reader i :json)
           db (transit/read reader)]
       (reset! words (first db))
@@ -30,6 +27,6 @@
       (reset! total-spams (last db)))))
 
 (defn write-db []
-  (with-open [o (clojure.java.io/output-stream (str (System/getProperty "user.home") "/" (:location (:filter-db c/config))))]
+  (with-open [o (clojure.java.io/output-stream (:location (:filter-db @c/config)))]
     (let [writer (transit/writer o :json)]
       (transit/write writer [@words @total-hams @total-spams]))))

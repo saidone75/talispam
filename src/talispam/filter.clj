@@ -16,7 +16,7 @@
         (->> text
              (re-seq #"\w{3,}")
              (map #(.toLowerCase ^String %)))]
-    (if (:use (:dictionary c/config))
+    (if (:use (:dictionary @c/config))
       (filter #(contains? @dict/dictionary %) words)
       words)))
 

@@ -7,7 +7,6 @@
          '[talispam.dictionary :as dict]
          '[talispam.filter :as f]
          '[talispam.utils :as utils]
-         '[immuconf.config :as immu]
          '[clojure.tools.cli :refer [parse-opts]])
 
 (def cli-options
@@ -79,11 +78,11 @@
   
   ;; load configuration
   (try
-    (alter-var-root #'c/config (constantly (immu/load (str (System/getProperty "user.home") "/" ".talispam/talispam.cfg.edn"))))
+    (c/load-config (c/expand-home "~/.talispam/talispam.cfg.edn"))
     (catch Exception e (exit 1 (.getMessage e))))
   
   ;; load dictionary if needed
-  (if (:use (:dictionary c/config))
+  (if (:use (:dictionary @c/config))
     (try
       (dict/load-dictionary!)
       (catch Exception e (exit 1 (.getMessage e)))))
