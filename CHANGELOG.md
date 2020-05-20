@@ -8,4 +8,4 @@
 - expand ~ as home directory in config file
 - persistent dictionary
 
-## 0.1.0 (2020-05-28)
+## 0.1.0 (2020-05-18)
