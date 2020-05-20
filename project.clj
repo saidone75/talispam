@@ -1,4 +1,4 @@
-(defproject talispam "0.2.0-SNAPSHOT"
+(defproject talispam "0.2.0"
   :description "a software held to act as a charm to avert spam and bring good messages"
   :url "https://github.com/saidone75/talispam"
   :license {:name "MIT"
