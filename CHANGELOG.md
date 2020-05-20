@@ -7,3 +7,5 @@
 - filter can now be trained also from mbox
 - expand ~ as home directory in config file
 - persistent dictionary
+
+## 0.1.0 (2020-05-28)
