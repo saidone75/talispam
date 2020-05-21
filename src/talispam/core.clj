@@ -82,7 +82,7 @@
   
   ;; load configuration
   (try
-    (c/load-config (c/expand-home "~/.talispam/talispam.cfg.edn"))
+    (c/load-config (utils/expand-home "~/.talispam/talispam.cfg.edn"))
     (catch Exception e (exit 1 (.getMessage e))))
   
   ;; load dictionary if needed

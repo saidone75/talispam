@@ -3,6 +3,11 @@
 
 (require '[clojure.string :as s])
 
+(defn expand-home [path]
+  (if (s/starts-with? path "~/")
+    (s/replace path #"^~" (System/getProperty "user.home"))
+    path))
+
 (defn add-headers [message version score & [whitelisted]]
   (let [message (s/split-lines message)]
     (str
