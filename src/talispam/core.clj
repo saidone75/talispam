@@ -7,6 +7,7 @@
          '[talispam.dictionary :as dict]
          '[talispam.filter :as f]
          '[talispam.utils :as utils]
+         '[talispam.whitelist :as w]
          '[clojure.tools.cli :refer [parse-opts]])
 
 (def cli-options
@@ -21,8 +22,9 @@
         options-summary
         ""
         "Actions:"
-        "  score    print ham/spam score for stdin"
-        "  learn    train talispam classifier"]
+        "  score        print ham/spam score for stdin"
+        "  learn        train talispam classifier"
+        "  whitelist    print a list of addresses in ham corpus"]
        (s/join \newline)))
 
 (defn- error-msg [errors]
@@ -38,7 +40,7 @@
       errors
       {:exit-message (error-msg errors)}
       (and (= 1 (count arguments))
-           (#{"learn" "score"} (first arguments)))
+           (#{"learn" "score" "whitelist"} (first arguments)))
       {:action (first arguments) :options options}
       :else
       {:action nil})))
@@ -69,7 +71,9 @@
         score (format-score (f/score in))]
     (if print-score
       (println score)
-      (println (utils/add-headers in score)))))
+      (println (utils/add-headers in score
+                                  (if (:use (:whitelist @c/config))
+                                    (w/whitelisted? (utils/get-sender in))))))))
 
 (defn -main [& args]
   ;; set version string
@@ -93,4 +97,5 @@
       (case action
         "learn" (learn!)
         "score" (classify *in* 'score)
+        "whitelist" (w/print-whitelist-from-corpus)
         nil (classify *in*)))))

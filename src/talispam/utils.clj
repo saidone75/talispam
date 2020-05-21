@@ -4,7 +4,7 @@
 (require '[clojure.string :as s]
          '[talispam.config :as c])
 
-(defn add-headers [message score]
+(defn add-headers [message score & [whitelisted]]
   (let [message (s/split-lines message)]
     (str
      (first message)
@@ -16,7 +16,9 @@
      (.getHostName (java.net.InetAddress/getLocalHost))
      "\r\n"
      "X-Spam-Flag: "
-     (if (> score 60) "YES")
+     (if (not whitelisted)
+       (if (> score 60) "YES" "NO")
+       "*** sender address whitelisted ***")
      "\r\n"
      "X-Spam-Level: "
      (str score "/100")
@@ -26,6 +28,4 @@
 (defn get-sender [message]
   (first
    (drop 1
-         (re-find #"^From ([a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)" message))))
-
-
+         (re-find #"^From ([A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?\.)+[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?)" message))))

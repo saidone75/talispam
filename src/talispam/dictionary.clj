@@ -31,6 +31,3 @@
       (let [reader (transit/reader i :json)]
         (reset! dictionary (transit/read reader))))
     (init-dictionary!)))
-
-
-
