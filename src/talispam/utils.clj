@@ -23,3 +23,9 @@
      "\r\n"
      (s/join \newline (rest message)))))
 
+(defn get-sender [message]
+  (first
+   (drop 1
+         (re-find #"^From ([a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)" message))))
+
+

@@ -74,8 +74,6 @@
         s (- 1 (fisher ham-probs number-of-probs))]
     (/ (+ (- 1 h) s) 2.0)))
 
-;; ham and spam corpus from training
-
 ;; build a new classifier db
 (defn learn []
   (db/clear-db)
