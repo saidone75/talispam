@@ -1,17 +1,16 @@
 (ns talispam.utils
   (:gen-class))
 
-(require '[clojure.string :as s]
-         '[talispam.config :as c])
+(require '[clojure.string :as s])
 
-(defn add-headers [message score & [whitelisted]]
+(defn add-headers [message version score & [whitelisted]]
   (let [message (s/split-lines message)]
     (str
      (first message)
      "\r\n"
      "X-Spam-Checker-Version: "
      "TaliSpam "
-     c/version
+     version
      " on "
      (.getHostName (java.net.InetAddress/getLocalHost))
      "\r\n"

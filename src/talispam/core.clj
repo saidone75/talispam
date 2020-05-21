@@ -71,7 +71,7 @@
         score (format-score (f/score in))]
     (if print-score
       (println score)
-      (println (utils/add-headers in score
+      (println (utils/add-headers in c/version score
                                   (if (:use (:whitelist @c/config))
                                     (w/whitelisted? (utils/get-sender in))))))))
 
