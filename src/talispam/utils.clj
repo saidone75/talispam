@@ -22,7 +22,7 @@
      "X-Spam-Flag: "
      (if (not whitelisted)
        (if (> score 60) "YES" "NO")
-       "*** sender address whitelisted ***")
+       "*** sender whitelisted ***")
      "\r\n"
      "X-Spam-Level: "
      (str score "/100")

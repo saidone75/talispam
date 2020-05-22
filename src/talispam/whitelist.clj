@@ -18,7 +18,15 @@
 (defn whitelisted? [address]
   (if (false? @whitelist)
     (load-whitelist))
-  (contains? @whitelist address))
+  (or
+   ;; full address
+   (contains? @whitelist address)
+   ;; host or "domain"
+   (not-every?
+    nil?
+    (map
+     #(re-matches (re-pattern (str ".*" % "$")) address)
+     @whitelist))))
 
 (defn- add-to-whitelist [address]
   (if (and (not (empty? address)) (not (whitelisted? address)))
