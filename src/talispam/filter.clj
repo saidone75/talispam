@@ -12,7 +12,13 @@
 ;; extract words from a text
 ;; can use a dictionary of "admissible keys" to keep classifier db size low
 (defn- extract-words [text]
-  (let [words
+  (let [text
+        (s/split text #"\n\n")
+        text
+        (if (> (count text) 1)
+          (s/join " " (rest text))
+          (first text))
+        words
         (->> text
              (re-seq #"\w{3,}")
              (map #(.toLowerCase ^String %)))]
