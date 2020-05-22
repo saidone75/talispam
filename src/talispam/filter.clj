@@ -1,5 +1,7 @@
 (ns talispam.filter
-  (:gen-class))
+  (:gen-class)
+  (:import (org.jsoup Jsoup)
+           (org.jsoup.safety Whitelist)))
 
 (require '[clojure.string :as s]
          '[talispam.config :as c]
@@ -20,6 +22,7 @@
           (first text))
         words
         (->> text
+             (#(Jsoup/clean % (Whitelist.)))
              (re-seq #"\w{3,}")
              (map #(.toLowerCase ^String %)))]
     (if (:use (:dictionary @c/config))

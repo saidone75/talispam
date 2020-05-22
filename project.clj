@@ -6,7 +6,8 @@
   :dependencies [[org.clojure/clojure "1.10.1"]
                  [russellwhitaker/immuconf "0.3.0"]
                  [com.cognitect/transit-clj "1.0.324"]
-                 [org.clojure/tools.cli "1.0.194"]]
+                 [org.clojure/tools.cli "1.0.194"]
+                 [org.jsoup/jsoup "1.13.1"]]
   :main ^:skip-aot talispam.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}

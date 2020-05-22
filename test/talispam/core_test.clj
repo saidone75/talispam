@@ -6,7 +6,7 @@
       dictionary (talispam.dictionary/load-dictionary!)
       db (talispam.db/load-db)
       message (rand-nth (talispam.corpus/ham))]
-  (deftest filter
+  (deftest filter-test
     (let [score (talispam.filter/score message)]
       (is (<= 0 score))
       (is (>= 1 score)))))
