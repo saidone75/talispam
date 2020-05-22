@@ -10,3 +10,4 @@
     (let [score (talispam.filter/score message)]
       (is (<= 0 score))
       (is (>= 1 score)))))
+

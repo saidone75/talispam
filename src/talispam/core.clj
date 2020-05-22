@@ -24,7 +24,8 @@
         "Actions:"
         "  score        print ham/spam score for stdin"
         "  learn        train talispam classifier"
-        "  whitelist    print a list of addresses in ham corpus"]
+        "  whitelist    print a list of addresses in ham corpus"
+        "  print-db     print all words from classifier db by spam score"]
        (s/join \newline)))
 
 (defn- error-msg [errors]
@@ -40,7 +41,7 @@
       errors
       {:exit-message (error-msg errors)}
       (and (= 1 (count arguments))
-           (#{"learn" "score" "whitelist"} (first arguments)))
+           (#{"score" "learn" "whitelist" "print-db"} (first arguments)))
       {:action (first arguments) :options options}
       :else
       {:action nil})))
@@ -60,13 +61,16 @@
   ;; type hint needed for GraalVM
   (Math/round ^Float (* 100 score)))
 
-;; classify stdin
-(defn- classify [in & [print-score]]
+(defn- load-db []
   (if (not (db/exists-db))
     (exit 1 "classifier db not found, see talispam -h"))
   (try
     (db/load-db)
-    (catch Exception e (exit 1 "error loading classifier db")))
+    (catch Exception e (exit 1 "error loading classifier db"))))
+
+;; classify stdin
+(defn- classify [in & [print-score]]
+  (load-db)
   (let [in (slurp in)
         score (format-score (f/score in))]
     (if print-score
@@ -74,6 +78,13 @@
       (println (utils/add-headers in c/version score
                                   (if (:use (:whitelist @c/config))
                                     (w/whitelisted? (utils/get-sender in))))))))
+
+(defn- print-db []
+  (load-db)
+  (println
+   (s/join \newline
+           (map #(str (key %) " " (val %))
+                (f/db-by-score)))))
 
 (defn -main [& args]
   ;; set version string
@@ -98,4 +109,5 @@
         "learn" (learn!)
         "score" (classify *in* 'score)
         "whitelist" (w/print-whitelist-from-corpus)
+        "print-db" (print-db)
         nil (classify *in*)))))

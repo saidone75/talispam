@@ -30,3 +30,5 @@
   (with-open [o (clojure.java.io/output-stream (:location (:filter-db @c/config)))]
     (let [writer (transit/writer o :json)]
       (transit/write writer [@words @total-hams @total-spams]))))
+
+

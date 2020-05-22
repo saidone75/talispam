@@ -83,3 +83,14 @@
   (doall (map
           #(train % 'spam)
           (corpus/spam))))
+
+(defn db-by-score [& [asc]]
+  (sort-by
+   val
+   (if asc
+     #(< %1 %2)
+     #(> %1 %2)) 
+   (reduce
+    #(assoc %1 (name (key %2)) (score (str (key %2))))
+    {}
+    @db/words)))
