@@ -3,6 +3,7 @@
 ## 0.2.1-SNAPSHOT (current)
 
 - new function for inspecting classifier db
+- extract sender addresses from ham corpus
 - optional white-list of trusted senders/domains
 
 ## 0.2.0 (2020-05-20)
