@@ -2,7 +2,8 @@
 
 ## 0.2.1-SNAPSHOT (current)
 
-- optional white-list of trusted senders
+- new function for inspecting classifier db
+- optional white-list of trusted senders/domains
 
 ## 0.2.0 (2020-05-20)
 
