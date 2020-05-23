@@ -92,11 +92,13 @@
 
 (defn- stats [options]
   (load-db)
-  (clojure.pprint/pprint
-   (->> (s/split (slurp (:mbox options)) #"\n\n(?=From )")
-        (map f/score)
-        frequencies
-        freq/stats)))
+  (let [res
+        (->> (s/split (slurp (:mbox options)) #"\n\n(?=From )")
+             (map f/score)
+             frequencies
+             freq/stats)]
+    (doseq [[k v] (map vector (keys res) (vals res))]
+      (println (str (name k) " " v)))))
 
 (defn -main [& args]
   ;; set version string
@@ -124,3 +126,4 @@
         "print-db" (print-db)
         "stats" (stats options)
         nil (classify *in*)))))
+
