@@ -7,7 +7,8 @@
                  [russellwhitaker/immuconf "0.3.0"]
                  [com.cognitect/transit-clj "1.0.324"]
                  [org.clojure/tools.cli "1.0.194"]
-                 [org.jsoup/jsoup "1.13.1"]]
+                 [org.jsoup/jsoup "1.13.1"]
+                 [com.stuartsierra/frequencies "0.1.0"]]
   :main ^:skip-aot talispam.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}
