@@ -11,21 +11,24 @@
          '[clojure.tools.cli :refer [parse-opts]])
 
 (def cli-options
-  [["-h" "--help"]])
+  [["-m" "--mbox FILE" "mailbox to analyze"
+    :validate [#(utils/is-file? %) "must be a mbox file"]]
+   ["-h" "--help"]])
 
 (defn- usage [options-summary]
   (->> [(str "TaliSpam " c/version)
         ""
-        "Usage: talispam [options] action"
+        "Usage: talispam [action [options]]"
         ""
         "Options:"
         options-summary
         ""
         "Actions:"
-        "  score        print ham/spam score for stdin"
         "  learn        train talispam classifier"
+        "  score        print ham/spam score for stdin"
         "  whitelist    print a list of addresses in ham corpus"
-        "  print-db     print all words from classifier db by spam score"]
+        "  print-db     print all words from classifier db by spam score"
+        "  stats        print stats summary for a mbox"]
        (s/join \newline)))
 
 (defn- error-msg [errors]
@@ -41,7 +44,7 @@
       errors
       {:exit-message (error-msg errors)}
       (and (= 1 (count arguments))
-           (#{"score" "learn" "whitelist" "print-db"} (first arguments)))
+           (#{"learn" "score" "whitelist" "print-db" "stats"} (first arguments)))
       {:action (first arguments) :options options}
       :else
       {:action nil})))
@@ -86,6 +89,10 @@
            (map #(str (key %) " " (val %))
                 (f/db-by-score)))))
 
+(defn- stats [options]
+  (println options)
+  (exit 0 "not yet implemented"))
+
 (defn -main [& args]
   ;; set version string
   ;; would be nice to read it from project.clj
@@ -110,4 +117,5 @@
         "score" (classify *in* 'score)
         "whitelist" (w/print-whitelist-from-corpus)
         "print-db" (print-db)
+        "stats" (stats options)
         nil (classify *in*)))))

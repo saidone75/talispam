@@ -8,6 +8,15 @@
     (s/replace path #"^~" (System/getProperty "user.home"))
     path))
 
+(defn is-file? [path]
+  (and
+   (.exists (clojure.java.io/file path))
+   (.isFile (clojure.java.io/file path))))
+
+(defn is-mbox? [path]
+  ;; TODO proper implementation
+  (is-file? path))
+
 (defn add-headers [message version score & [whitelisted]]
   (let [message (s/split-lines message)]
     (str
