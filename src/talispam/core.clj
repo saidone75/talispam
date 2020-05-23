@@ -8,7 +8,8 @@
          '[talispam.filter :as f]
          '[talispam.utils :as utils]
          '[talispam.whitelist :as w]
-         '[clojure.tools.cli :refer [parse-opts]])
+         '[clojure.tools.cli :refer [parse-opts]]
+         '[com.stuartsierra.frequencies :as freq])
 
 (def cli-options
   [["-m" "--mbox FILE" "mailbox to analyze"
@@ -90,8 +91,12 @@
                 (f/db-by-score)))))
 
 (defn- stats [options]
-  (println options)
-  (exit 0 "not yet implemented"))
+  (load-db)
+  (clojure.pprint/pprint
+   (->> (s/split (slurp (:mbox options)) #"\n\n(?=From )")
+        (map f/score)
+        frequencies
+        freq/stats)))
 
 (defn -main [& args]
   ;; set version string
