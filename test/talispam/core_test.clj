@@ -10,13 +10,4 @@
   ;; generic filter test
   (deftest filter-test
     (let [score (talispam.filter/score message)]
-      (is (<= 0 score))
-      (is (>= 1 score))))
-  ;; stats
-  (deftest stats
-    (def f-ham (freq/stats (frequencies (map talispam.filter/score (talispam.corpus/ham)))))
-    (def f-spam (freq/stats (frequencies (map talispam.filter/score (talispam.corpus/spam)))))
-    (println "HAM stats:")
-    (clojure.pprint/pprint f-ham)
-    (println "SPAM stats:")
-    (clojure.pprint/pprint f-spam)))
+      (is (<= 0 score 1)))))
