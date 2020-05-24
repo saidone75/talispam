@@ -12,9 +12,10 @@
 ;; mostly based on http://www.gigamonkeys.com/book/practical-a-spam-filter.html
 
 (defn- extract-subject [message]
-  (subs
-   (first (filter #(s/starts-with? % "Subject: ") (s/split message #"\n")))
-   9))
+  (let [s (first (filter #(s/starts-with? % "Subject: ") (s/split message #"\n")))]
+    (if (nil? s)
+      ""
+      (subs s 9))))
 
 (defn- extract-body [message]
   (Jsoup/clean
