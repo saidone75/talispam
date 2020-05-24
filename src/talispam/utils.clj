@@ -36,8 +36,8 @@
        (if (> score threshold) "YES" "NO")
        "*** sender whitelisted ***")
      "\r\n"
-     "X-Spam-Level: "
-     (str score "/100")
+     "X-Spam-Score: "
+     (str score)
      "\r\n"
      (s/join \newline (rest message)))))
 
