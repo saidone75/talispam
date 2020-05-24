@@ -13,7 +13,7 @@
 
 (def cli-options
   [["-m" "--mbox FILE" "mailbox to analyze"
-    :validate [#(utils/is-file? %) "must be a mbox file"]]
+    :validate [#(utils/is-mbox? %) "must be a mbox file"]]
    ["-h" "--help"]])
 
 (defn- usage [options-summary]
@@ -126,4 +126,3 @@
         "print-db" (print-db)
         "stats" (stats options)
         nil (classify *in*)))))
-

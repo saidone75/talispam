@@ -14,8 +14,11 @@
    (.isFile (clojure.java.io/file path))))
 
 (defn is-mbox? [path]
-  ;; TODO proper implementation
-  (is-file? path))
+  (and (is-file? path)
+       (with-open [rdr (clojure.java.io/reader path)]
+         (if (s/starts-with? (first (line-seq rdr)) "From ")
+           true
+           false))))
 
 (defn add-headers [message version score & [whitelisted]]
   (let [message (s/split-lines message)]
