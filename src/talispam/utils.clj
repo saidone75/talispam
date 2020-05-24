@@ -20,7 +20,7 @@
            true
            false))))
 
-(defn add-headers [message version score & [whitelisted]]
+(defn add-headers [message version score threshold & [whitelisted]]
   (let [message (s/split-lines message)]
     (str
      (first message)
@@ -33,7 +33,7 @@
      "\r\n"
      "X-Spam-Flag: "
      (if (not whitelisted)
-       (if (> score 60) "YES" "NO")
+       (if (> score threshold) "YES" "NO")
        "*** sender whitelisted ***")
      "\r\n"
      "X-Spam-Level: "

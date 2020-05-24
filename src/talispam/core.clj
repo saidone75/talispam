@@ -79,7 +79,10 @@
         score (format-score (f/score in))]
     (if print-score
       (println score)
-      (println (utils/add-headers in c/version score
+      (println (utils/add-headers in
+                                  c/version
+                                  score
+                                  (:spam-threshold @c/config)
                                   (if (:use (:whitelist @c/config))
                                     (w/whitelisted? (utils/get-sender in))))))))
 
