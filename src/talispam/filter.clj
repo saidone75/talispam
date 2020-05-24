@@ -11,18 +11,36 @@
 
 ;; mostly based on http://www.gigamonkeys.com/book/practical-a-spam-filter.html
 
+(defn- extract-subject [message]
+  (subs
+   (first (filter #(s/starts-with? % "Subject: ") (s/split message #"\n")))
+   9))
+
+(defn- extract-body [message]
+  (Jsoup/clean
+   (s/join
+    " "
+    (rest
+     (s/split message #"\n\n")))
+   (Whitelist.)))
+
+(defn- extract-text [message]
+  (if (> (count (s/split message #"\n\n")) 1)
+    ;; likely an e-mail
+    (str
+     (extract-subject message)
+     " "
+     (extract-body message))
+    ;; likely not an e-mail
+    message))
+
 ;; extract words from a text
 ;; can use a dictionary of "admissible keys" to keep classifier db size low
 (defn- extract-words [text]
   (let [text
-        (s/split text #"\n\n")
-        text
-        (if (> (count text) 1)
-          (s/join " " (rest text))
-          (first text))
+        (extract-text text)
         words
         (->> text
-             (#(Jsoup/clean % (Whitelist.)))
              (re-seq #"\w{3,}")
              (map #(.toLowerCase ^String %)))]
     (if (:use (:dictionary @c/config))
