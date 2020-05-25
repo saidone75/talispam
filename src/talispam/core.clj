@@ -82,7 +82,7 @@
       (println (utils/add-headers in
                                   c/version
                                   score
-                                  (:spam-threshold @c/config)
+                                  (or (:spam-threshold @c/config) 70)
                                   (if (:use (:whitelist @c/config))
                                     (w/whitelisted? (utils/get-sender in))))))))
 
