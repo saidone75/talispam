@@ -1,7 +1,8 @@
 (ns talispam.filter
   (:gen-class)
   (:import (org.jsoup Jsoup)
-           (org.jsoup.safety Whitelist)))
+           (org.jsoup.safety Whitelist)
+           (java.util Base64)))
 
 (require '[clojure.string :as s]
          '[talispam.config :as c]
@@ -17,13 +18,23 @@
       ""
       (subs s 9))))
 
+(defn- is-base64? [message]
+  (let [s (first (filter #(s/starts-with? % "Content-Transfer-Encoding: base64") (s/split message #"\n")))]
+    (if (nil? s)
+      false
+      true)))
+
 (defn- extract-body [message]
-  (Jsoup/clean
-   (s/join
-    " "
-    (rest
-     (s/split message #"\n\n")))
-   (Whitelist.)))
+  (let [body
+        (s/join
+         " "
+         (rest
+          (s/split message #"\n\n")))]
+    (Jsoup/clean
+     (if (is-base64? message)
+       (String. (.decode (Base64/getDecoder) (s/replace body #"[\r\n ]" "")))
+       body)
+     (Whitelist.))))
 
 (defn- extract-text [message]
   (if (> (count (s/split message #"\n\n")) 1)
