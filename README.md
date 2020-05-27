@@ -5,7 +5,7 @@ a talispam (or spamulet) is a program held to act as a charm to avert spam and b
 ### Build
 get the sources:
 ```console
-$ git clone https://github.com/saidone75/talispam.git -b v0.2.0
+$ git clone https://github.com/saidone75/talispam.git -b v0.2.1
 ```
 produce an uberjar with leiningen:
 ```console
@@ -14,9 +14,9 @@ $ lein uberjar
 Compiling talispam.config
 Compiling talispam.core
 [...]
-Compiling talispam.filter
-Created /home/saidone/talispam/target/uberjar/talispam-0.2.0.jar
-Created /home/saidone/talispam/target/uberjar/talispam-0.2.0-standalone.jar
+Compiling talispam.whitelist
+Created /home/saidone/talispam/target/uberjar/talispam-0.2.1.jar
+Created /home/saidone/talispam/target/uberjar/talispam-0.2.1-standalone.jar
 ```
 create a native binary (need a GraalVM toolchain installed and configured):
 ```console
@@ -31,7 +31,7 @@ and copy the executable binary (target/talispam) somewhere in your path
 clone the sample configuration from [talispam-config](https://github.com/saidone75/talispam-config) on your ~/.talispam folder:
 ```console
 $ cd ~
-$ git clone https://github.com/saidone75/talispam-config.git -b v0.2.0 .talispam
+$ git clone https://github.com/saidone75/talispam-config.git -b v0.2.1 .talispam
 ```
 (WARNING: contains a quite big spam/ham training corpus, you may want to train the filter against your own collections)
 
@@ -45,9 +45,9 @@ done
 print spam/ham score (lower score is ham, higher is spam)
 ```console
 $ cat .talispam/easy_ham/02051.58e196144807bd76d7b77d4b7efb6d32 | talispam score
-19
+14
 $ cat .talispam/spam/00460.8996dc28ab56dd7b6f35b956deceaf22 | talispam score
-96
+100
 ```
 ### Compatibility
 I imagined it as a drop-in replacement for SpamAssassin on my personal mail server: invoked by procmail without arguments will add the same spam identification header and return the message to stdout:
@@ -74,14 +74,14 @@ user    0m7.170s
 sys     0m0.156s
 $ time cat .talispam/spam/00460.8996dc28ab56dd7b6f35b956deceaf22 | talispam | head -n 5
 From ilug-admin@linux.ie  Wed Sep 25 10:29:22 2002
-X-Spam-Checker-Version: TaliSpam 0.2.0 on kugelmass
+X-Spam-Checker-Version: talispam 0.2.1 on kugelmass
 X-Spam-Flag: YES
-X-Spam-Level: 96/100
+X-Spam-Score: 99
 Return-Path: <ilug-admin@linux.ie>
 
-real    0m0.136s
-user    0m0.129s
-sys     0m0.034s
+real    0m0.242s
+user    0m0.219s
+sys     0m0.055s
 ```
 
 ## License
