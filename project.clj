@@ -1,4 +1,4 @@
-(defproject talispam "0.2.1"
+(defproject talispam "0.3.0-SNAPSHOT"
   :description "a software held to act as a charm to avert spam and bring good messages"
   :url "https://github.com/saidone75/talispam"
   :license {:name "MIT"
@@ -11,11 +11,14 @@
                  [com.stuartsierra/frequencies "0.1.0"]]
   :main ^:skip-aot talispam.core
   :target-path "target/%s"
-  :profiles {:uberjar {:aot :all}
+  :profiles {:uberjar {:aot :all
+                       :jvm-opts ["-Dclojure.compiler.direct-linking=true"]}
              :dev {:plugins [[lein-shell "0.5.0"]]}}
   :aliases {"native"
             ["shell"
-             "native-image" "--report-unsupported-elements-at-runtime"
+             "native-image"
+             "--report-unsupported-elements-at-runtime"
              "--initialize-at-build-time"
+             "-J-Dclojure.compiler.direct-linking=true"
              "-jar" "./target/uberjar/${:uberjar-name:-${:name}-${:version}-standalone.jar}"
              "-H:Name=./target/${:name}"]})
