@@ -72,7 +72,7 @@
 
 ;; train classifier db with a single message 
 (defn- train [text type]
-  (doall (map #(increment-count % type) (extract-words text)))
+  (run! #(increment-count % type) (extract-words text))
   (if (= 'ham type)
     (swap! db/total-hams inc)
     (swap! db/total-spams inc)))
@@ -119,12 +119,12 @@
 ;; build a new classifier db
 (defn learn []
   (db/clear-db)
-  (doall (map
-          #(train % 'ham)
-          (corpus/ham)))
-  (doall (map
-          #(train % 'spam)
-          (corpus/spam))))
+  (run!
+   #(train % 'ham)
+   (corpus/ham))
+  (run!
+   #(train % 'spam)
+   (corpus/spam)))
 
 (defn db-by-score [& [asc]]
   (sort-by
