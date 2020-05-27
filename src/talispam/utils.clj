@@ -26,7 +26,7 @@
      (first message)
      "\r\n"
      "X-Spam-Checker-Version: "
-     "TaliSpam "
+     "talispam "
      version
      " on "
      (.getHostName (java.net.InetAddress/getLocalHost))

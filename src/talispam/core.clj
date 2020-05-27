@@ -106,7 +106,7 @@
 (defn -main [& args]
   ;; set version string
   ;; would be nice to read it from project.clj
-  (alter-var-root #'c/version (constantly "0.2.1-SNAPSHOT"))
+  (alter-var-root #'c/version (constantly "0.2.1"))
   
   ;; load configuration
   (try
