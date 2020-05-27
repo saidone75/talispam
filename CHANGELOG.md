@@ -2,6 +2,8 @@
 
 ## 0.3.0-SNAPSHOT (master)
 
+- switch to MessagePack for db and dictionary
+
 ## 0.2.1 (2020-05-27)
 
 **[compare](https://github.com/saidone75/talispam/compare/v0.2.0...v0.2.1)**
