@@ -32,7 +32,10 @@
           (s/split message #"\n\n")))]
     (Jsoup/clean
      (if (is-base64? message)
-       (String. (.decode (Base64/getDecoder) (s/replace body #"[\r\n ]" "")))
+       (do
+         (try
+           (String. (.decode (Base64/getDecoder) (s/replace body #"[\r\n ]" "")))
+           (catch Exception e body)))
        body)
      (Whitelist.))))
 
