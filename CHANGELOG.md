@@ -1,7 +1,13 @@
 # Changelog
 
-## 0.2.1-SNAPSHOT (current)
+## 0.3.0-SNAPSHOT (master)
 
+## 0.2.1 (2020-05-27)
+
+**[compare](https://github.com/saidone75/talispam/compare/v0.2.0...v0.2.1)**
+
+- initial working on base64 encoded messages
+- consider subject
 - new function for inspecting classifier db
 - extract sender addresses from ham corpus
 - optional white-list of trusted senders/domains
