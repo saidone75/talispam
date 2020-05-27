@@ -20,7 +20,7 @@
 
 (defn load-db []
   (with-open [i (clojure.java.io/input-stream (:location (:filter-db @c/config)))]
-    (let [reader (transit/reader i :json)
+    (let [reader (transit/reader i :msgpack)
           db (transit/read reader)]
       (reset! words (first db))
       (reset! total-hams (second db))
@@ -28,7 +28,7 @@
 
 (defn write-db []
   (with-open [o (clojure.java.io/output-stream (:location (:filter-db @c/config)))]
-    (let [writer (transit/writer o :json)]
+    (let [writer (transit/writer o :msgpack)]
       (transit/write writer [@words @total-hams @total-spams]))))
 
 
