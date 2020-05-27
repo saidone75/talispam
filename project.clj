@@ -21,4 +21,5 @@
              "--initialize-at-build-time"
              "-J-Dclojure.compiler.direct-linking=true"
              "-jar" "./target/uberjar/${:uberjar-name:-${:name}-${:version}-standalone.jar}"
-             "-H:Name=./target/${:name}"]})
+             "-H:Name=./target/${:name}"
+             "-H:ReflectionConfigurationFiles=./reflectconfig.json"]})
