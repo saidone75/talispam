@@ -13,7 +13,7 @@
 
 (defn write-dictionary! []
   (with-open [o (clojure.java.io/output-stream (:location (:dictionary @c/config)))]
-    (let [writer (transit/writer o :msgpack)]
+    (let [writer (transit/writer o :json)]
       (transit/write writer @dictionary))))
 
 (defn init-dictionary! []
@@ -28,7 +28,7 @@
 (defn load-dictionary! []
   (if (exists-dictionary)
     (with-open [i (clojure.java.io/input-stream (:location (:dictionary @c/config)))]
-      (let [reader (transit/reader i :msgpack)]
+      (let [reader (transit/reader i :json)]
         (reset! dictionary (transit/read reader))))
     (init-dictionary!)))
 

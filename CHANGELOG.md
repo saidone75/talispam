@@ -2,7 +2,8 @@
 
 ## 0.3.0-SNAPSHOT (master)
 
-- switch to MessagePack for db and dictionary
+- new message parser (work in progress)
+- predisposition for using MessagePack for db and dictionary
 
 ## 0.2.1 (2020-05-27)
 

@@ -8,52 +8,16 @@
          '[talispam.config :as c]
          '[talispam.db :as db]
          '[talispam.dictionary :as dict]
-         '[talispam.corpus :as corpus])
+         '[talispam.corpus :as corpus]
+         '[talispam.message :as msg])
 
 ;; mostly based on http://www.gigamonkeys.com/book/practical-a-spam-filter.html
-
-(defn- extract-subject [message]
-  (let [s (first (filter #(s/starts-with? % "Subject: ") (s/split message #"\n")))]
-    (if (nil? s)
-      ""
-      (subs s 9))))
-
-(defn- is-base64? [message]
-  (let [s (first (filter #(s/starts-with? % "Content-Transfer-Encoding: base64") (s/split message #"\n")))]
-    (if (nil? s)
-      false
-      true)))
-
-(defn- extract-body [message]
-  (let [body
-        (s/join
-         " "
-         (rest
-          (s/split message #"\n\n")))]
-    (Jsoup/clean
-     (if (is-base64? message)
-       (do
-         (try
-           (String. (.decode (Base64/getDecoder) (s/replace body #"[\r\n ]" "")))
-           (catch Exception e body)))
-       body)
-     (Whitelist.))))
-
-(defn- extract-text [message]
-  (if (> (count (s/split message #"\n\n")) 1)
-    ;; likely an e-mail
-    (str
-     (extract-subject message)
-     " "
-     (extract-body message))
-    ;; likely not an e-mail
-    message))
 
 ;; extract words from a text
 ;; can use a dictionary of "admissible keys" to keep classifier db size low
 (defn- extract-words [text]
   (let [text
-        (extract-text text)
+        (msg/extract-text text)
         words
         (->> text
              (re-seq #"\w{3,}")
