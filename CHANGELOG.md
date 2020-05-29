@@ -2,7 +2,7 @@
 
 ## 0.3.0-SNAPSHOT (master)
 
-- new message parser (work in progress)
+- new message parser
 - predisposition for using MessagePack for db and dictionary
 
 ## 0.2.1 (2020-05-27)
