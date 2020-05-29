@@ -37,14 +37,14 @@
 
 (defn- extract-parts [message boundary]
   (let [parts
-        (drop 1 (s/split msg (re-pattern (str boundary "[\\n\\r]+"))))]
+        (drop 1 (s/split message (re-pattern (str boundary "[\\n\\r]+"))))]
     (map extract-part parts)))
 
 (defn- extract-body [headers message]
   (if (and (not (nil? (:content-type headers)))
            (s/starts-with? (:content-type headers) "multipart"))
     ;; multipart
-    (let [boundary (first (drop 1 (re-find #".*boundary=\"([^\"]+)\"" (:content-type (get-headers msg)))))]
+    (let [boundary (first (drop 1 (re-find #".*boundary=\"([^\"]+)\"" (:content-type (get-headers message)))))]
       (if (not (nil? boundary))
         (apply str (extract-parts message boundary))
         (extract-part message)))
