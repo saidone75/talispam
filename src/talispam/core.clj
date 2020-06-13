@@ -9,7 +9,8 @@
          '[talispam.utils :as utils]
          '[talispam.whitelist :as w]
          '[clojure.tools.cli :refer [parse-opts]]
-         '[com.stuartsierra.frequencies :as freq])
+         '[com.stuartsierra.frequencies :as freq]
+         '[tlight.spin :refer [spin done]])
 
 (def cli-options
   [["-m" "--mbox FILE" "mailbox to analyze"
@@ -56,10 +57,12 @@
 
 ;; train classifier
 (defn- learn! []
-  (println "building classifier db...")
+  (spin :type :spin1 :ms 200)
+  (print "building classifier db ")
   (f/learn)
   (db/write-db)
-  (println "done"))
+  (done)
+  (println "\ndone!"))
 
 (defn- format-score [score]
   ;; type hint needed for GraalVM
