@@ -82,12 +82,15 @@
 ;; build a new classifier db
 (defn learn []
   (db/clear-db)
-  (run!
-   #(train % 'ham)
-   (corpus/ham))
-  (run!
-   #(train % 'spam)
-   (corpus/spam)))
+  (let [futures (doall
+                 (for [ham (corpus/ham)]
+                   (future (train ham 'ham))))]
+    (run! deref futures))
+  (let [futures (doall
+                 (for [spam (corpus/spam)]
+                   (future (train spam 'spam))))]
+    (run! deref futures))
+  (shutdown-agents))
 
 (defn db-by-score [& [asc]]
   (sort-by
