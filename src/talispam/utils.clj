@@ -16,7 +16,7 @@
 (defn is-mbox? [path]
   (and (is-file? path)
        (with-open [rdr (clojure.java.io/reader path)]
-         (if (s/starts-with? (first (line-seq rdr)) "From ")
+         (if (s/starts-with? (or (first (line-seq rdr)) "") "From ")
            true
            false))))
 
