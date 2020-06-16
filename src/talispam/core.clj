@@ -18,7 +18,7 @@
    ["-h" "--help"]])
 
 (defn- usage [options-summary]
-  (->> [(str "TaliSpam " c/version)
+  (->> [(str c/program-name " " c/program-version)
         ""
         "Usage: talispam [action [options]]"
         ""
@@ -83,7 +83,7 @@
     (if print-score
       (println score)
       (println (utils/add-headers in
-                                  c/version
+                                  c/program-version
                                   score
                                   (or (:spam-threshold @c/config) 70)
                                   (if (:use (:whitelist @c/config))
@@ -107,10 +107,6 @@
       (println (str (name k) " " v)))))
 
 (defn -main [& args]
-  ;; set version string
-  ;; would be nice to read it from project.clj
-  (alter-var-root #'c/version (constantly "0.3.0-SNAPSHOT"))
-  
   ;; load configuration
   (try
     (c/load-config (utils/expand-home "~/.talispam/talispam.cfg.edn"))

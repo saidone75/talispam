@@ -9,7 +9,8 @@
                  [org.clojure/tools.cli "1.0.194"]
                  [org.jsoup/jsoup "1.13.1"]
                  [com.stuartsierra/frequencies "0.1.0"]
-                 [tlight/spin "0.0.4"]]
+                 [tlight/spin "0.0.4"]
+                 [jp.ne.tir/project-clj "0.1.7"]]
   :main ^:skip-aot talispam.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all
