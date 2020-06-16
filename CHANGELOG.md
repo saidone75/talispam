@@ -2,6 +2,8 @@
 
 ## 0.3.0-SNAPSHOT (master)
 
+- faster parallel training
+- spinner for long operations
 - new message parser
 - predisposition for using MessagePack for db and dictionary
 
