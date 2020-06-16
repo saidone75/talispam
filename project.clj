@@ -22,6 +22,7 @@
              "--report-unsupported-elements-at-runtime"
              "--initialize-at-build-time"
              "-J-Dclojure.compiler.direct-linking=true"
+             "-J-Dclojure.spec.skip-macros=true"
              "-jar" "./target/uberjar/${:uberjar-name:-${:name}-${:version}-standalone.jar}"
              "-H:Name=./target/${:name}"
              "-H:ReflectionConfigurationFiles=./reflectconfig.json"]})

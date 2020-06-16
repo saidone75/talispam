@@ -2,6 +2,7 @@
   (:gen-class))
 
 (require '[clojure.string :as s]
+         '[clojure.spec.alpha :as spec]
          '[talispam.config :as c]
          '[talispam.db :as db]
          '[talispam.dictionary :as dict]
@@ -9,6 +10,7 @@
          '[talispam.utils :as utils]
          '[talispam.whitelist :as w]
          '[cli-matic.core :refer [run-cmd]]
+         '[expound.alpha :as ex]
          '[com.stuartsierra.frequencies :as freq]
          '[tlight.spin :refer [spin done]])
 
@@ -61,14 +63,21 @@
                 (f/db-by-score)))))
 
 (defn- stats [options]
+  (spin :type :spin1 :ms 200)
+  (print "analyzing mbox ")
   (load-db)
   (let [res
         (->> (s/split (slurp (:mbox options)) #"\n\n(?=From )")
              (map f/score)
              frequencies
              freq/stats)]
+    (done)
+    (println "\ndone!")
     (doseq [[k v] (map vector (keys res) (vals res))]
       (println (str (name k) " " v)))))
+
+;; validator for mbox option
+(ex/def ::mbox utils/is-mbox? "should be a valid mbox file")
 
 ;; cli-matic config
 (def CONFIGURATION
@@ -93,7 +102,7 @@
                   :runs        print-db}
                  {:command     "stats"
                   :description ["print stats summary for a mbox"]
-                  :opts        [{:option "mbox" :short "m" :default :present :as "mbox file" :type :string}]
+                  :opts        [{:option "mbox" :short "m" :default :present :as "mbox file" :type :string :spec ::mbox}]
                   :runs        stats}]})
 
 (defn -main [& args]
@@ -107,7 +116,9 @@
     (try
       (dict/load-dictionary!)
       (catch Exception e (exit 1 (.getMessage e)))))
-
+  
   (if (nil? args)
     (classify *in*)
-    (run-cmd args CONFIGURATION)))
+    (do
+      (println (str c/program-name " " c/program-version)) 
+      (run-cmd args CONFIGURATION))))
