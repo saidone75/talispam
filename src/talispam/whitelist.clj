@@ -32,7 +32,7 @@
   (if (and (not (empty? address)) (not (whitelisted? address)))
     (swap! whitelist conj address)))
 
-(defn print-whitelist-from-corpus []
+(defn print-whitelist-from-corpus [parms]
   (load-whitelist)
   (doall
    (map

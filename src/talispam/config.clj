@@ -9,9 +9,10 @@
 
 (def config (atom {}))
 
+;; from project.clj
 (def program-name (project-clj/get :name))
-
 (def program-version (project-clj/get :version))
+(def program-description (project-clj/get :description))
 
 (defn- adjust-paths [c]
   (w/postwalk #(if (string? %) (utils/expand-home %) %) c))

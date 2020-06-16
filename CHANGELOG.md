@@ -2,6 +2,7 @@
 
 ## 0.3.0-SNAPSHOT (master)
 
+- switched to cli-matic from tools.cli
 - faster parallel training
 - spinner for long operations
 - new message parser
