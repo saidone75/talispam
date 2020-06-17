@@ -27,10 +27,6 @@
   (done)
   (println "\ndone!"))
 
-(defn- format-score [score]
-  ;; type hint needed for GraalVM
-  (Math/round ^Float (* 100 score)))
-
 (defn- load-db []
   (if (not (db/exists-db))
     (exit 1 (str "classifier db not found, see " c/program-name " --help")))
@@ -42,7 +38,7 @@
 (defn- classify [in & [print-score]]
   (load-db)
   (let [in (slurp in)
-        score (format-score (f/score in))]
+        score (Math/round ^Float (* 100 (f/score in)))]
     (if print-score
       (println score)
       (println (utils/add-headers in
