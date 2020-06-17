@@ -116,5 +116,4 @@
   (if (nil? args)
     (classify *in*)
     (do
-      (println (str c/program-name " " c/program-version)) 
       (run-cmd args CONFIGURATION))))
