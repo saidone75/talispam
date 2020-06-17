@@ -1,6 +1,8 @@
 # talispam
 a talispam (or spamulet) is a program held to act as a charm to avert spam and bring good messages
 
+[![talispam.png](https://i.postimg.cc/KYZyT1M7/talispam.png)](https://postimg.cc/tsmfQCD7)
+
 ## Very quick roundtrip
 ### Build
 get the sources:
@@ -51,7 +53,7 @@ $ cat .talispam/spam/00460.8996dc28ab56dd7b6f35b956deceaf22 | talispam score
 98
 ```
 ### Compatibility
-I imagined it as a drop-in replacement for SpamAssassin on my personal mail server: invoked by procmail without arguments will add the same spam identification header and return the message to stdout:
+I imagined it as a drop-in replacement for SpamAssassin on my personal mail server: invoked without arguments will add the same spam identification header and return the message to stdout:
 ```console
 $ cat .talispam/spam/00460.8996dc28ab56dd7b6f35b956deceaf22 | talispam | head -n 5
 From ilug-admin@linux.ie  Wed Sep 25 10:29:22 2002
@@ -60,8 +62,42 @@ X-Spam-Flag: YES
 X-Spam-Score: 98
 Return-Path: <ilug-admin@linux.ie>
 ```
+integration with procmail is pretty much the same as well, just add these lines on your .procmailrc:
+```
+:0fw
+| talispam
+
+:0e
+EXITCODE==$?
+
+:0:
+* ^X-Spam-Flag: YES
+$HOME/Mail/spam
+```
+### Available commands
+```console
+$ talispam -?
+NAME:
+ talispam - a Bayesian mail filter
+
+USAGE:
+ talispam [global-options] command [command options] [arguments...]
+
+VERSION:
+ 0.3.0
+
+COMMANDS:
+   learn                train talispam classifier
+   score                print ham/spam score for stdin
+   whitelist            print a list of addresses in ham corpus
+   print-db             print all words from classifier db by spam score
+   stats                print stats summary for a mbox
+
+GLOBAL OPTIONS:
+   -?, --help
+```
 ### Performance
-on my little mail server (Intel(R) Atom(TM) CPU D2550   @ 1.86GHz) is extraordinarily fast, expecially in comparison with SpamAssassin (to be honest, not directly comparable because SpamAssassin perform a lot more checks):
+on my little mail server (Intel Atom D2550 @ 1.86GHz) is extraordinarily fast, expecially in comparison with SpamAssassin (to be honest, not directly comparable because SpamAssassin perform a lot more checks):
 ```console
 $ time cat .talispam/spam/00460.8996dc28ab56dd7b6f35b956deceaf22 | spamassassin | head -n 5
 From ilug-admin@linux.ie  Wed Sep 25 10:29:22 2002
