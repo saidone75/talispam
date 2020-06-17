@@ -1,6 +1,8 @@
 # Changelog
 
-## 0.3.0-SNAPSHOT (master)
+## 0.3.0 (2020-06-17)
+
+**[compare](https://github.com/saidone75/talispam/compare/v0.2.1...v0.3.0)**
 
 - switched to cli-matic from tools.cli
 - faster parallel training
