@@ -115,5 +115,4 @@
   
   (if (nil? args)
     (classify *in*)
-    (do
-      (run-cmd args CONFIGURATION))))
+    (run-cmd args CONFIGURATION)))
