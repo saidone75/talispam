@@ -1,4 +1,4 @@
-(defproject talispam "0.3.0"
+(defproject talispam "0.3.1-SNAPSHOT"
   :description "a Bayesian mail filter"
   :url "https://github.com/saidone75/talispam"
   :license {:name "MIT"
@@ -11,18 +11,16 @@
                  [com.stuartsierra/frequencies "0.1.0"]
                  [tlight/spin "0.0.4"]
                  [jp.ne.tir/project-clj "0.1.7"]]
+  :plugins [[io.taylorwood/lein-native-image "0.3.1"]]
   :main ^:skip-aot talispam.core
   :target-path "target/%s"
-  :profiles {:uberjar {:aot :all
-                       :jvm-opts ["-Dclojure.compiler.direct-linking=true"]}
-             :dev {:plugins [[lein-shell "0.5.0"]]}}
-  :aliases {"native"
-            ["shell"
-             "native-image"
-             "--report-unsupported-elements-at-runtime"
-             "--initialize-at-build-time"
-             "-J-Dclojure.compiler.direct-linking=true"
-             "-J-Dclojure.spec.skip-macros=true"
-             "-jar" "./target/uberjar/${:uberjar-name:-${:name}-${:version}-standalone.jar}"
-             "-H:Name=./target/${:name}"
-             "-H:ReflectionConfigurationFiles=./reflectconfig.json"]})
+  :native-image {:name "talispam"
+                 :dependencies [[borkdude/clj-reflector-graal-java11-fix "0.0.1-graalvm-20.1.0"]]
+                 :opts ["--report-unsupported-elements-at-runtime"
+                        "--initialize-at-build-time"
+                        "-H:ReflectionConfigurationFiles=./reflectconfig.json"
+                        "-H:+ReportExceptionStackTraces"]}
+  :profiles {:uberjar
+             {:aot :all
+              :jvm-opts ["-Dclojure.compiler.direct-linking=true"
+                         "-Dclojure.spec.skip-macros=true"]}})
