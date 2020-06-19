@@ -1,7 +1,6 @@
 (ns talispam.filter
   (:gen-class)
-  (:import (org.jsoup.safety Whitelist)
-           (java.util Base64)))
+  (:import (org.jsoup.safety Whitelist)))
 
 (require '[clojure.string :as s]
          '[talispam.config :as c]
