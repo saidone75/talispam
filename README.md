@@ -22,7 +22,7 @@ Created /home/saidone/talispam/target/uberjar/talispam-0.3.0-standalone.jar
 ```
 create a native binary (need a GraalVM toolchain installed and configured):
 ```console
-$ lein native
+$ lein native-image
 Build on Server(pid: 20771, port: 40355)
 [./target/talispam:20771]    classlist:   4,185.77 ms,  2.15 GB
 [...]
