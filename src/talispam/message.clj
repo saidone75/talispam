@@ -9,7 +9,7 @@
 
 (defn- get-headers [msg]
   (reduce
-   #(if (not (nil? (first %2)))
+   #(if-not (nil? (first %2))
       (assoc %1 (keyword (s/replace (s/lower-case (first %2)) #":$" "")) (last %2))
       %1)
    {}
@@ -44,7 +44,7 @@
            (s/starts-with? (:content-type headers) "multipart"))
     ;; multipart
     (let [boundary (first (drop 1 (re-find #".*boundary=\"([^\"]+)\"" (:content-type (get-headers message)))))]
-      (if (not (nil? boundary))
+      (if-not (nil? boundary)
         (apply str (extract-parts message boundary))
         (extract-part message)))
     (extract-part message)))
