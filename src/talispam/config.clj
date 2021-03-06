@@ -1,8 +1,7 @@
 (ns talispam.config
   (:gen-class))
 
-(require '[clojure.string :as s]
-         '[clojure.walk :as w]
+(require '[clojure.walk :as w]
          '[talispam.utils :as utils]
          '[immuconf.config :as immu]
          '[project-clj.core :as project-clj])

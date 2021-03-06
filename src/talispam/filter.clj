@@ -1,9 +1,7 @@
 (ns talispam.filter
-  (:gen-class)
-  (:import (org.jsoup.safety Whitelist)))
+  (:gen-class))
 
-(require '[clojure.string :as s]
-         '[talispam.config :as c]
+(require '[talispam.config :as c]
          '[talispam.db :as db]
          '[talispam.dictionary :as dict]
          '[talispam.corpus :as corpus]
@@ -27,7 +25,7 @@
 ;; increment ham/spam counter for a given word
 (defn- increment-count [word type]
   (let [word (keyword word)]
-    (if (not (contains? @db/words word))
+    (when-not (contains? @db/words word)
       (swap! db/words assoc word [0 0]))
     (let [v (if (= 'ham type) [1 0] [0 1])]
       (swap! db/words assoc word (mapv + v (word @db/words))))))

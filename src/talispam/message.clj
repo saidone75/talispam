@@ -4,8 +4,7 @@
            (org.jsoup.safety Whitelist)
            (java.util Base64)))
 
-(require '[clojure.string :as s]
-         '[clojure.java.io :as io])
+(require '[clojure.string :as s])
 
 (defn- get-headers [msg]
   (reduce

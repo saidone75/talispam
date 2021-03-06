@@ -1,7 +1,7 @@
 (ns talispam.db
   (:gen-class))
 
-(require '[clojure.string :as s]
+(require '[clojure.java.io :as io]
          '[cognitect.transit :as transit]
          '[talispam.config :as c])
 
@@ -15,7 +15,7 @@
   (reset! total-spams 0))
 
 (defn exists-db []
-  (.exists (clojure.java.io/file
+  (.exists (io/file
             (:location (:filter-db @c/config)))))
 
 (defn load-db []

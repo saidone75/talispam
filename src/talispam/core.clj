@@ -2,7 +2,6 @@
   (:gen-class))
 
 (require '[clojure.string :as s]
-         '[clojure.spec.alpha :as spec]
          '[talispam.config :as c]
          '[talispam.db :as db]
          '[talispam.dictionary :as dict]
@@ -28,11 +27,11 @@
   (println "\ndone!"))
 
 (defn- load-db []
-  (if (not (db/exists-db))
+  (when-not (db/exists-db)
     (exit 1 (str "classifier db not found, see " c/program-name " --help")))
   (try
     (db/load-db)
-    (catch Exception e (exit 1 "error loading classifier db"))))
+    (catch Exception e (exit 1 (.getMessage e)))))
 
 ;; classify stdin
 (defn- classify [in & [print-score]]
@@ -45,7 +44,7 @@
                                   c/program-version
                                   score
                                   (or (:spam-threshold @c/config) 70)
-                                  (if (:use (:whitelist @c/config))
+                                  (when (:use (:whitelist @c/config))
                                     (w/whitelisted? (utils/get-sender in))))))))
 
 (defn- classify-score [parms]
@@ -108,7 +107,7 @@
     (catch Exception e (exit 1 (.getMessage e))))
   
   ;; load dictionary if needed
-  (if (:use (:dictionary @c/config))
+  (when (:use (:dictionary @c/config))
     (try
       (dict/load-dictionary!)
       (catch Exception e (exit 1 (.getMessage e)))))

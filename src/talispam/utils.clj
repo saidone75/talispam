@@ -1,7 +1,8 @@
 (ns talispam.utils
   (:gen-class))
 
-(require '[clojure.string :as s])
+(require '[clojure.string :as s]
+         '[clojure.java.io :as io])
 
 (defn expand-home [path]
   (if (s/starts-with? path "~/")
@@ -10,8 +11,8 @@
 
 (defn is-file? [path]
   (and
-   (.exists (clojure.java.io/file path))
-   (.isFile (clojure.java.io/file path))))
+   (.exists (io/file path))
+   (.isFile (io/file path))))
 
 (defn is-mbox? [path]
   (and (is-file? path)

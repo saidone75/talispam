@@ -1,7 +1,8 @@
 (ns talispam.dictionary
   (:gen-class))
 
-(require '[clojure.string :as s]
+(require '[clojure.java.io :as io]
+         '[clojure.string :as s]
          '[cognitect.transit :as transit]
          '[talispam.config :as c])
 
@@ -12,7 +13,7 @@
             (:location (:dictionary @c/config)))))
 
 (defn write-dictionary! []
-  (with-open [o (clojure.java.io/output-stream (:location (:dictionary @c/config)))]
+  (with-open [o (io/output-stream (:location (:dictionary @c/config)))]
     (let [writer (transit/writer o :json)]
       (transit/write writer @dictionary))))
 
