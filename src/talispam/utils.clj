@@ -1,6 +1,8 @@
 (ns talispam.utils
   (:gen-class))
 
+(set! *warn-on-reflection* true)
+
 (require '[clojure.string :as s]
          '[clojure.java.io :as io])
 

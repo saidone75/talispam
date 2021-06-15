@@ -3,6 +3,8 @@
             [talispam.core :refer :all]
             [com.stuartsierra.frequencies :as freq]))
 
+(set! *warn-on-reflection* true)
+
 (let [config (talispam.config/load-config (talispam.utils/expand-home "~/.talispam/talispam.cfg.edn"))
       dictionary (talispam.dictionary/load-dictionary!)
       db (talispam.db/load-db)

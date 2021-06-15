@@ -1,6 +1,8 @@
 (ns talispam.filter
   (:gen-class))
 
+(set! *warn-on-reflection* true)
+
 (require '[talispam.config :as c]
          '[talispam.db :as db]
          '[talispam.dictionary :as dict]

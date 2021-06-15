@@ -4,6 +4,8 @@
            (org.jsoup.safety Whitelist)
            (java.util Base64)))
 
+(set! *warn-on-reflection* true)
+
 (require '[clojure.string :as s])
 
 (defn- get-headers [msg]

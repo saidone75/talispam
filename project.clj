@@ -15,8 +15,9 @@
   :main ^:skip-aot talispam.core
   :target-path "target/%s"
   :native-image {:name "talispam"
-                 :dependencies [[borkdude/clj-reflector-graal-java11-fix "0.0.1-graalvm-20.1.0"]]
-                 :opts ["--report-unsupported-elements-at-runtime"
+                 :opts ["--no-server"
+                        "-J-Xmx3g"
+                        "--report-unsupported-elements-at-runtime"
                         "--initialize-at-build-time"
                         "-H:ReflectionConfigurationFiles=./reflectconfig.json"]}
   :profiles {:uberjar

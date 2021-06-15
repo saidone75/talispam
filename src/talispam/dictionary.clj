@@ -1,6 +1,8 @@
 (ns talispam.dictionary
   (:gen-class))
 
+(set! *warn-on-reflection* true)
+
 (require '[clojure.java.io :as io]
          '[clojure.string :as s]
          '[cognitect.transit :as transit]

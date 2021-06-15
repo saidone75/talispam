@@ -1,6 +1,8 @@
 (ns talispam.db
   (:gen-class))
 
+(set! *warn-on-reflection* true)
+
 (require '[clojure.java.io :as io]
          '[cognitect.transit :as transit]
          '[talispam.config :as c])
