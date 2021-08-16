@@ -25,5 +25,12 @@
 	   [
 	       {"name" : "<init>", "parameterTypes" : ["org.msgpack.template.Template", "org.msgpack.template.Template"] }
 	   ]
- } 
+ },
+ {
+	   "name" : "org.jsoup.Jsoup",
+	   "methods" :
+	   [
+	       {"name" : "clean", "parameterTypes" : ["java.lang.String", "org.jsoup.safety.Whitelist"] }
+	   ]
+ }
 ]

@@ -15,8 +15,7 @@
   :main ^:skip-aot talispam.core
   :target-path "target/%s"
   :native-image {:name "talispam"
-                 :opts ["--no-server"
-                        "-J-Xmx3g"
+                 :opts ["-J-Xmx3g"
                         "--report-unsupported-elements-at-runtime"
                         "--initialize-at-build-time"
                         "-H:ReflectionConfigurationFiles=./reflectconfig.json"]}
