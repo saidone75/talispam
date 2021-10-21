@@ -1,4 +1,5 @@
 *~
+*.log
 pom.xml
 pom.xml.asc
 *.jar
