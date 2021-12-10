@@ -56,7 +56,7 @@
   (load-db)
   (println
    (s/join \newline
-           (map #(str (key %) " " (val %))
+           (map #(str (key %) " " (format "%.3f" (val %)))
                 (f/db-by-score)))))
 
 (defn- stats [options]
