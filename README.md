@@ -1,5 +1,5 @@
 # talispam
-a talispam (or spamulet) is a program held to act as a charm to avert spam and bring good messages
+a talispam is a program held to act as a charm to avert spam and bring good messages
 
 [![talispam.png](https://i.postimg.cc/KYZyT1M7/talispam.png)](https://postimg.cc/tsmfQCD7)
 
@@ -20,7 +20,7 @@ Compiling talispam.whitelist
 Created /home/saidone/talispam/target/uberjar/talispam-0.3.0.jar
 Created /home/saidone/talispam/target/uberjar/talispam-0.3.0-standalone.jar
 ```
-create a native binary (need a GraalVM toolchain installed and configured):
+create a native binary (*need a GraalVM toolchain installed and configured*):
 ```console
 $ lein native-image
 Build on Server(pid: 20771, port: 40355)
@@ -122,6 +122,6 @@ sys     0m0.055s
 ```
 
 ## License
-Copyright (c) 2020 Saidone
+Copyright (c) 2020-2022 Saidone
 
 Distributed under the MIT License
