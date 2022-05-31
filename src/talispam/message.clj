@@ -1,7 +1,7 @@
 (ns talispam.message
   (:gen-class)
   (:import (org.jsoup Jsoup)
-           (org.jsoup.safety Whitelist)
+           (org.jsoup.safety Safelist)
            (java.util Base64)))
 
 (set! *warn-on-reflection* true)
@@ -33,7 +33,7 @@
          (String. (.decode (Base64/getDecoder) (s/replace (second (s/split part #"\n\n")) #"[\r\n ]" "")))
          (catch Exception e part))
        (s/join " " (drop 1 (s/split part #"\n\n"))))
-     (Whitelist.))))
+     (Safelist.))))
 
 (defn- extract-parts [message boundary]
   (let [parts
