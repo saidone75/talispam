@@ -6,7 +6,7 @@
   :dependencies [[org.clojure/clojure "1.11.1"]
                  [russellwhitaker/immuconf "0.3.0"]
                  [com.cognitect/transit-clj "1.0.329"]
-                 [cli-matic "0.5.3"]
+                 [cli-matic "0.5.4"]
                  [org.jsoup/jsoup "1.15.1"]
                  [com.stuartsierra/frequencies "0.1.0"]
                  [tlight/spin "0.0.4"]
