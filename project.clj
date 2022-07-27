@@ -7,7 +7,7 @@
                  [russellwhitaker/immuconf "0.3.0"]
                  [com.cognitect/transit-clj "1.0.329"]
                  [cli-matic "0.5.4"]
-                 [org.jsoup/jsoup "1.15.1"]
+                 [org.jsoup/jsoup "1.15.2"]
                  [com.stuartsierra/frequencies "0.1.0"]
                  [tlight/spin "0.0.4"]
                  [jp.ne.tir/project-clj "0.1.7"]
