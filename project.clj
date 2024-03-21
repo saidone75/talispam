@@ -3,7 +3,7 @@
   :url "https://github.com/saidone75/talispam"
   :license {:name "MIT"
             :url "https://github.com/saidone75/talispam/blob/master/LICENSE"}
-  :dependencies [[org.clojure/clojure "1.11.1"]
+  :dependencies [[org.clojure/clojure "1.11.2"]
                  [russellwhitaker/immuconf "0.3.0"]
                  [com.cognitect/transit-clj "1.0.333"]
                  [cli-matic "0.5.4"]
