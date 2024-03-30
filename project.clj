@@ -11,14 +11,15 @@
                  [com.stuartsierra/frequencies "0.1.0"]
                  [tlight/spin "0.0.4"]
                  [jp.ne.tir/project-clj "0.1.7"]
-                 [com.github.clj-easy/graal-build-time "0.1.4"]]
+                 [com.github.clj-easy/graal-build-time "1.0.5"]]
   :plugins [[io.taylorwood/lein-native-image "0.3.1"]]
   :main ^:skip-aot talispam.core
   :target-path "target/%s"
   :native-image {:name "talispam"
                  :opts ["-J-Xmx3g"
                         "--report-unsupported-elements-at-runtime"
-                        "-H:ReflectionConfigurationFiles=./reflectconfig.json"]}
+                        "-H:ReflectionConfigurationFiles=./reflectconfig.json"
+                        "--features=clj_easy.graal_build_time.InitClojureClasses"]}
   :profiles {:uberjar
              {:aot :all
               :jvm-opts ["-Dclojure.compiler.direct-linking=true"
