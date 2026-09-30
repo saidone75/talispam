@@ -24,7 +24,7 @@
   (s/lower-case (s/trim (first (s/split (or value default) #";" 2)))))
 
 (defn- parameters [value]
-  ;; Quoted parameters may contain semicolons and escaped characters.
+  ;; quoted parameters may contain semicolons and escaped characters
   (into {}
         (map (fn [[_ name quoted unquoted]]
                [(s/lower-case name)
@@ -49,7 +49,7 @@
     (.toByteArray output)))
 
 (defn- decode-content [body encoding charset]
-  ;; A malformed encoding or unsupported charset must not abort classification.
+  ;; a malformed encoding or unsupported charset must not abort classification
   (try
     (let [bytes (case (s/lower-case (s/trim (or encoding "")))
                   "base64" (.decode (Base64/getDecoder)
@@ -62,7 +62,7 @@
     (catch IllegalArgumentException _ body)))
 
 (defn- decode-subject [subject]
-  ;; Whitespace between adjacent RFC 2047 encoded words is not displayed.
+  ;; whitespace between adjacent RFC 2047 encoded words is not displayed
   (let [subject (s/replace (or subject "") #"(\?=)[ \t]+(?==\?)" "$1")]
     (s/replace subject #"=\?([^?\s]+)\?([bBqQ])\?([^?]*)\?="
                (fn [[word charset encoding content]]
@@ -100,7 +100,7 @@
         params (parameters content-type)
         disposition (get headers "content-disposition")]
     (cond
-      ;; Bound recursion for malformed or adversarial input.
+      ;; bound recursion for malformed or adversarial input
       (> depth 50) nil
       (= "attachment" (media-type disposition "")) nil
 
@@ -109,16 +109,16 @@
         (let [parts (map split-entity (split-parts body boundary))]
           (if (= mime "multipart/alternative")
             (or (some #(when (= "text/plain" (media-type
-                                             (get-in % [:headers "content-type"])
-                                             "text/plain"))
+                                              (get-in % [:headers "content-type"])
+                                              "text/plain"))
                          (not-empty (entity-text % (inc depth)))) parts)
                 (some #(not-empty (entity-text % (inc depth))) parts))
             (s/join "\n" (keep #(entity-text % (inc depth)) parts)))))
 
       (= mime "message/rfc822")
       (entity-text (split-entity (decode-content body
-                                               (get headers "content-transfer-encoding")
-                                               (get params "charset"))) (inc depth))
+                                                 (get headers "content-transfer-encoding")
+                                                 (get params "charset"))) (inc depth))
 
       (#{"text/plain" "text/html"} mime)
       (let [text (decode-content body (get headers "content-transfer-encoding")
@@ -129,10 +129,10 @@
 
 (defn extract-text [message]
   (let [{:keys [headers] :as entity} (split-entity message)]
-    ;; A blank line alone does not make free-form text an email.
+    ;; a blank line alone does not make free-form text an email
     (if (some #(contains? headers %) ["subject" "from" "to" "date"
-                                     "mime-version" "content-type"
-                                     "content-transfer-encoding"])
+                                      "mime-version" "content-type"
+                                      "content-transfer-encoding"])
       (s/join " " (remove s/blank? [(decode-subject (get headers "subject"))
                                     (entity-text entity 0)]))
       message)))

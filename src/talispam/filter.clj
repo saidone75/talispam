@@ -56,8 +56,8 @@
        (+ weight data-points))))
 
 (defn- inverse-chi-square [value degrees-of-freedom]
-  ;; Sum the chi-square survival series in log space to avoid underflow
-  ;; in its first term, even when later terms carry substantial probability.
+  ;; sum the chi-square survival series in log space to avoid underflow
+  ;; in its first term, even when later terms carry substantial probability
   (cond
     (zero? value) 1.0
     (= Double/POSITIVE_INFINITY value) 0.0
@@ -79,7 +79,7 @@
    (* 2 number-of-probs)))
 
 (defn score [text]
-  ;; Training holds the same lock so scoring never reads a partial rebuild.
+  ;; training holds the same lock so scoring never reads a partial rebuild
   (locking db/words
     (let [words (->> (extract-words text)
                      (map keyword)
