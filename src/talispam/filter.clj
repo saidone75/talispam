@@ -26,15 +26,15 @@
 
 ;; increment ham/spam counter for a given word
 (defn- increment-count [word type]
-  (let [word (keyword word)]
-    (when-not (contains? @db/words word)
-      (swap! db/words assoc word [0 0]))
-    (let [v (if (= 'ham type) [1 0] [0 1])]
-      (swap! db/words assoc word (mapv + v (word @db/words))))))
+  (let [word (keyword word)
+        index (if (= 'ham type) 0 1)]
+    (swap! db/words update word
+           (fn [counts]
+             (update (or counts [0 0]) index inc)))))
 
 ;; train classifier db with a single message 
 (defn- train [text type]
-  (run! #(increment-count % type) (extract-words text))
+  (run! #(increment-count % type) (distinct (extract-words text)))
   (if (= 'ham type)
     (swap! db/total-hams inc)
     (swap! db/total-spams inc)))
@@ -56,40 +56,56 @@
        (+ weight data-points))))
 
 (defn- inverse-chi-square [value degrees-of-freedom]
-  (let [m (if (= Double/POSITIVE_INFINITY value)
-            (/ Double/MAX_VALUE 2.0)
-            (/ value 2.0))]
-    (min
-     (reduce +
-             (reductions * (Math/exp (- m)) (for [i (range 1 (/ degrees-of-freedom 2))] (/ m i))))
-     1.0)))
+  ;; sum the chi-square survival series in log space to avoid underflow
+  ;; in its first term, even when later terms carry substantial probability
+  (cond
+    (zero? value) 1.0
+    (= Double/POSITIVE_INFINITY value) 0.0
+    :else
+    (let [m (/ value 2.0)
+          log-m (Math/log m)]
+      (loop [i 1, log-term (- m), log-sum (- m)]
+        (if (< i (quot degrees-of-freedom 2))
+          (let [next-term (+ log-term log-m (- (Math/log (double i))))
+                hi (max log-sum next-term)
+                lo (min log-sum next-term)]
+            (recur (inc i) next-term
+                   (+ hi (Math/log1p (Math/exp (- lo hi))))))
+          (min 1.0 (Math/exp log-sum)))))))
 
 (defn- fisher [probs number-of-probs]
   (inverse-chi-square
-   (* -2 (Math/log (reduce * probs)))
+   (* -2.0 (reduce + 0.0 (map #(Math/log (double %)) probs)))
    (* 2 number-of-probs)))
 
 (defn score [text]
-  (let [text (filter #(contains? @db/words %) (map keyword (extract-words text)))
-        spam-probs (map bayesian-spam-probability text)
-        ham-probs (map #(- 1 %) spam-probs)
-        number-of-probs (count text)
-        h (- 1 (fisher spam-probs number-of-probs))
-        s (- 1 (fisher ham-probs number-of-probs))]
-    (/ (+ (- 1 h) s) 2.0)))
+  ;; training holds the same lock so scoring never reads a partial rebuild
+  (locking db/words
+    (let [words (->> (extract-words text)
+                     (map keyword)
+                     distinct
+                     (filter #(contains? @db/words %)))
+          spam-probs (map bayesian-spam-probability words)
+          ham-probs (map #(- 1 %) spam-probs)
+          number-of-probs (count words)]
+      (if (zero? number-of-probs)
+        0.5
+        (/ (+ (fisher spam-probs number-of-probs)
+              (- 1 (fisher ham-probs number-of-probs)))
+           2.0)))))
 
 ;; build a new classifier db
 (defn learn []
-  (db/clear-db)
-  (let [futures (doall
-                 (for [ham (corpus/ham)]
-                   (future (train ham 'ham))))]
-    (run! deref futures))
-  (let [futures (doall
-                 (for [spam (corpus/spam)]
-                   (future (train spam 'spam))))]
-    (run! deref futures))
-  (shutdown-agents))
+  (locking db/words
+    (db/clear-db)
+    (let [futures (doall
+                   (for [ham (corpus/ham)]
+                     (future (train ham 'ham))))]
+      (run! deref futures))
+    (let [futures (doall
+                   (for [spam (corpus/spam)]
+                     (future (train spam 'spam))))]
+      (run! deref futures))))
 
 (defn db-by-score [& [asc]]
   (sort-by

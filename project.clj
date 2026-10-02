@@ -3,15 +3,15 @@
   :url "https://github.com/saidone75/talispam"
   :license {:name "MIT"
             :url "https://github.com/saidone75/talispam/blob/master/LICENSE"}
-  :dependencies [[org.clojure/clojure "1.11.2"]
+  :dependencies [[org.clojure/clojure "1.12.6"]
                  [russellwhitaker/immuconf "0.3.0"]
-                 [com.cognitect/transit-clj "1.0.333"]
+                 [com.cognitect/transit-clj "1.1.363"]
                  [cli-matic "0.5.4"]
-                 [org.jsoup/jsoup "1.17.2"]
+                 [org.jsoup/jsoup "1.23.2"]
                  [com.stuartsierra/frequencies "0.1.0"]
                  [tlight/spin "0.0.4"]
                  [jp.ne.tir/project-clj "0.1.7"]
-                 [com.github.clj-easy/graal-build-time "1.0.5"]]
+                 [com.github.clj-easy/graal-build-time "1.0.6"]]
   :plugins [[io.taylorwood/lein-native-image "0.3.1"]]
   :main ^:skip-aot talispam.core
   :target-path "target/%s"
