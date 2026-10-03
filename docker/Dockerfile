@@ -1,9 +1,9 @@
 # syntax=docker/dockerfile:1
 
-ARG GRAALVM_IMAGE=ghcr.io/graalvm/native-image-community:21-ol9
+ARG GRAALVM_IMAGE=ghcr.io/graalvm/native-image-community:25i4
 FROM ${GRAALVM_IMAGE} AS builder
 
-ARG LEIN_VERSION=2.11.2
+ARG LEIN_VERSION=2.12.0
 ENV LEIN_ROOT=1
 WORKDIR /application
 
