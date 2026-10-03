@@ -1,0 +1,14 @@
+services:
+  build:
+    image: talispam-builder:local
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: builder
+      args:
+        GRAALVM_IMAGE: ${GRAALVM_IMAGE:-ghcr.io/graalvm/native-image-community:21-ol9}
+    network_mode: none
+    entrypoint: ["/bin/sh", "-c"]
+    command: ["cp /out/talispam /dist/talispam && chmod 755 /dist/talispam"]
+    volumes:
+      - ../dist:/dist
