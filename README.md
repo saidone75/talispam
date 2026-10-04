@@ -138,6 +138,6 @@ sys     0m0.055s
 ```
 
 ## License
-Copyright (c) 2020-2022 Saidone
+Copyright (c) 2020-2026 Saidone
 
 Distributed under the MIT License
