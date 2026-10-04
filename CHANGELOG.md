@@ -1,7 +1,11 @@
 # Changelog
 
-## 0.3.1-SNAPSHOT (master)
+## 0.4.0-SNAPSHOT (master)
 
+- improved MIME parsing, including multipart messages, encoded subjects, base64 and quoted-printable content; attachments are excluded
+- made parallel training repeatable and scoring stable for large messages, counting each word once per message
+- added Docker builds with GraalVM and Leiningen, exporting the Linux native executable to `dist/talispam`
+- removed the obsolete test that depended on local configuration, dictionary, database and corpus files
 - build now use lein-native-image instead of lein-shell
 
 ## 0.3.0 (2020-06-17)
