@@ -31,26 +31,19 @@ Build on Server(pid: 20771, port: 40355)
 and copy the executable binary (target/talispam) somewhere in your path
 ### Build with Docker (GraalVM)
 Only Docker with Compose and BuildKit is required on the host. The build uses
-[GraalVM Community Native Image for JDK 21](https://www.graalvm.org/jdk21/docs/getting-started/container-images/)
+the GraalVM version specified in [docker/Dockerfile](docker/Dockerfile)
 and Leiningen to compile an uberjar and then a native executable.
 
 On Windows, from any directory:
 ```bat
-run-docker.bat build
+build-docker.bat
 ```
 On Linux/macOS:
 ```console
-$ ./run-docker.sh build
+$ ./build-docker.sh
 ```
-Both commands produce `dist/talispam`, a **Linux** executable for the Docker
-builder architecture (not a Windows `.exe`). It requires glibc compatible with
-Oracle Linux 9 (glibc 2.34 or newer). Copy it to the target Linux machine and
-configure `~/.talispam` as described below. Allocate at least 4 GB of memory to
-the Docker builder; native compilation uses a Java heap of up to 3 GB.
-
-`run-docker.bat purge` (Windows) or `./run-docker.sh purge` (Linux/macOS) removes the local builder image and Compose containers;
-it keeps the exported binary. To override the GraalVM image, set `GRAALVM_IMAGE`
-for the batch/Compose build, or pass `--build-arg GRAALVM_IMAGE=...` to Docker.
+Both scripts run the build directly without arguments and produce `dist/talispam`, a **Linux** executable.
+Copy it to the target Linux machine and configure `~/.talispam` as described below.
 
 ### Configuration
 clone the sample configuration from [talispam-config](https://github.com/saidone75/talispam-config) on your ~/.talispam folder:
