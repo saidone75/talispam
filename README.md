@@ -7,7 +7,7 @@ a talispam is a program held to act as a charm to avert spam and bring good mess
 ### Build
 get the sources:
 ```console
-$ git clone https://github.com/saidone75/talispam.git -b v0.3.0
+$ git clone https://github.com/saidone75/talispam.git -b v0.4.0
 ```
 produce an uberjar with leiningen:
 ```console
@@ -17,8 +17,8 @@ Compiling talispam.config
 Compiling talispam.core
 [...]
 Compiling talispam.whitelist
-Created /home/saidone/talispam/target/uberjar/talispam-0.3.0.jar
-Created /home/saidone/talispam/target/uberjar/talispam-0.3.0-standalone.jar
+Created /home/saidone/talispam/target/uberjar/talispam-0.4.0.jar
+Created /home/saidone/talispam/target/uberjar/talispam-0.4.0-standalone.jar
 ```
 create a native binary (*need a GraalVM toolchain installed and configured*):
 ```console
@@ -56,7 +56,7 @@ $ git clone https://github.com/saidone75/talispam-config.git -b v0.3.0 .talispam
 train bayesian classifier:
 ```console
 $ talispam learn
-talispam 0.3.0
+talispam 0.4.0
 building classifier db ✓
 done!
 ```
@@ -100,7 +100,7 @@ USAGE:
  talispam [global-options] command [command options] [arguments...]
 
 VERSION:
- 0.3.0
+ 0.4.0
 
 COMMANDS:
    learn                train talispam classifier
