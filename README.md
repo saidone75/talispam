@@ -29,6 +29,22 @@ Build on Server(pid: 20771, port: 40355)
 [./target/talispam:20771]      [total]: 244,502.81 ms,  1.98 GB
 ```
 and copy the executable binary (target/talispam) somewhere in your path
+### Build with Docker (GraalVM)
+Only Docker with Compose and BuildKit is required on the host. The build uses
+the GraalVM version specified in [docker/Dockerfile](docker/Dockerfile)
+and Leiningen to compile an uberjar and then a native executable.
+
+On Windows, from any directory:
+```bat
+build-docker.bat
+```
+On Linux/macOS:
+```console
+$ ./build-docker.sh
+```
+Both scripts run the build directly without arguments and produce `dist/talispam`, a **Linux** executable.
+Copy it to the target Linux machine and configure `~/.talispam` as described below.
+
 ### Configuration
 clone the sample configuration from [talispam-config](https://github.com/saidone75/talispam-config) on your ~/.talispam folder:
 ```console
