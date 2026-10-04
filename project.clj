@@ -1,4 +1,4 @@
-(defproject talispam "0.4.0"
+(defproject talispam "0.4.1-SNAPSHOT"
   :description "a Bayesian mail filter"
   :url "https://github.com/saidone75/talispam"
   :license {:name "MIT"
