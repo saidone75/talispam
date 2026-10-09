@@ -105,17 +105,12 @@
                   :runs        stats}]})
 
 (defn -main [& args]
-  ;; load configuration
-  (try
-    (c/load-config (utils/expand-home "~/.talispam/talispam.cfg.edn"))
-    (catch Exception e (exit 1 (.getMessage e))))
-  
-  ;; load dictionary if needed
-  (when (:use (:dictionary @c/config))
+  (when-not (some #{"--help" "-?"} args)
     (try
-      (dict/load-dictionary!)
+      (c/load-config (utils/expand-home "~/.talispam/talispam.cfg.edn"))
+      (when (get-in @c/config [:dictionary :use])
+        (dict/load-dictionary!))
       (catch Exception e (exit 1 (.getMessage e)))))
-  
   (if (nil? args)
     (classify *in*)
     (run-cmd args CONFIGURATION)))
