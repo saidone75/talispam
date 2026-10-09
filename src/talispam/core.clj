@@ -22,10 +22,11 @@
 ;; train classifier
 (defn- learn! [parms]
   (spin :type :spin1 :ms 200)
-  (print "building classifier db ")
-  (f/learn)
-  (db/write-db)
-  (done)
+  (try
+    (print "building classifier db ")
+    (f/learn)
+    (db/write-db)
+    (finally (done)))
   (println "\ndone!"))
 
 (defn- load-db []
@@ -60,15 +61,16 @@
                 (f/db-by-score)))))
 
 (defn- stats [options]
-  (spin :type :spin1 :ms 200)
-  (print "analyzing mbox ")
   (load-db)
+  (spin :type :spin1 :ms 200)
   (let [res
-        (->> (s/split (slurp (:mbox options)) #"\n\n(?=From )")
-             (map f/score)
-             frequencies
-             freq/stats)]
-    (done)
+        (try
+          (print "analyzing mbox ")
+          (->> (s/split (slurp (:mbox options)) #"\n\n(?=From )")
+               (map f/score)
+               frequencies
+               freq/stats)
+          (finally (done)))]
     (println "\ndone!")
     (doseq [[k v] (map vector (keys res) (vals res))]
       (println (str (name k) " " v)))))
@@ -103,17 +105,12 @@
                   :runs        stats}]})
 
 (defn -main [& args]
-  ;; load configuration
-  (try
-    (c/load-config (utils/expand-home "~/.talispam/talispam.cfg.edn"))
-    (catch Exception e (exit 1 (.getMessage e))))
-  
-  ;; load dictionary if needed
-  (when (:use (:dictionary @c/config))
+  (when-not (some #{"--help" "-?"} args)
     (try
-      (dict/load-dictionary!)
+      (c/load-config (utils/expand-home "~/.talispam/talispam.cfg.edn"))
+      (when (get-in @c/config [:dictionary :use])
+        (dict/load-dictionary!))
       (catch Exception e (exit 1 (.getMessage e)))))
-  
   (if (nil? args)
     (classify *in*)
     (run-cmd args CONFIGURATION)))
