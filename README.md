@@ -45,6 +45,24 @@ $ ./build-docker.sh
 Both scripts run the build directly without arguments and produce `dist/talispam`, a **Linux** executable.
 Copy it to the target Linux machine and configure `~/.talispam` as described below.
 
+The default native build uses `-Os` to optimize executable size and
+`-march=compatibility` so the executable can run on older CPUs.
+
+Docker builds also accept these environment variables:
+
+```console
+# Optimize for the CPU of the build machine (use only on compatible target CPUs).
+$ NATIVE_MARCH=native ./build-docker.sh
+# Faster development builds, with fewer compiler optimizations.
+$ NATIVE_OPTIMIZATION=b ./build-docker.sh
+# Favor performance over executable size.
+$ NATIVE_OPTIMIZATION=2 ./build-docker.sh
+```
+
+On Windows, set the variables with `SET` before running `build-docker.bat`.
+GraalVM Community treats `-O3` the same as `-O2`; profile-guided optimization
+requires Oracle GraalVM. See the [GraalVM optimization guide](https://www.graalvm.org/jdk25/reference-manual/native-image/optimizations-and-performance/).
+
 ### Configuration
 clone the sample configuration from [talispam-config](https://github.com/saidone75/talispam-config) on your ~/.talispam folder:
 ```console

@@ -5,6 +5,9 @@ services:
       context: ..
       dockerfile: docker/Dockerfile
       target: builder
+      args:
+        NATIVE_OPTIMIZATION: ${NATIVE_OPTIMIZATION:-s}
+        NATIVE_MARCH: ${NATIVE_MARCH:-compatibility}
     network_mode: none
     entrypoint: ["/bin/sh", "-c"]
     command: ["cp /out/talispam /dist/talispam && chmod 755 /dist/talispam"]
