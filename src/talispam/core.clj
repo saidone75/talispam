@@ -22,10 +22,11 @@
 ;; train classifier
 (defn- learn! [parms]
   (spin :type :spin1 :ms 200)
-  (print "building classifier db ")
-  (f/learn)
-  (db/write-db)
-  (done)
+  (try
+    (print "building classifier db ")
+    (f/learn)
+    (db/write-db)
+    (finally (done)))
   (println "\ndone!"))
 
 (defn- load-db []
@@ -60,15 +61,16 @@
                 (f/db-by-score)))))
 
 (defn- stats [options]
-  (spin :type :spin1 :ms 200)
-  (print "analyzing mbox ")
   (load-db)
+  (spin :type :spin1 :ms 200)
   (let [res
-        (->> (s/split (slurp (:mbox options)) #"\n\n(?=From )")
-             (map f/score)
-             frequencies
-             freq/stats)]
-    (done)
+        (try
+          (print "analyzing mbox ")
+          (->> (s/split (slurp (:mbox options)) #"\n\n(?=From )")
+               (map f/score)
+               frequencies
+               freq/stats)
+          (finally (done)))]
     (println "\ndone!")
     (doseq [[k v] (map vector (keys res) (vals res))]
       (println (str (name k) " " v)))))
