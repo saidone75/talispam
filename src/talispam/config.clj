@@ -1,7 +1,8 @@
 (ns talispam.config
   (:gen-class))
 
-(require '[clojure.walk :as w]
+(require '[clojure.edn :as edn]
+         '[clojure.walk :as w]
          '[talispam.utils :as utils]
          '[immuconf.config :as immu])
 
@@ -10,8 +11,7 @@
 ;; embed project metadata during compilation
 (defmacro ^:private project-metadata []
   (let [[_ project-name version & options]
-        (binding [*read-eval* false]
-          (read-string (slurp "project.clj")))
+        (edn/read-string (slurp "project.clj"))
         project (apply hash-map options)]
     {:name (name project-name)
      :version version
