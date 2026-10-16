@@ -18,11 +18,19 @@ jobs:
       with:
         distribution: temurin
         java-version: '25'
-    - name: Set up Leiningen
+    - name: Set up Clojure CLI
       uses: DeLaGuardo/setup-clojure@13.7.0
       with:
-        lein: '2.12.0'
+        cli: '1.12.5.1664'
     - name: Install dependencies
-      run: lein deps
+      run: |
+        clojure -P -M:test
+        clojure -P -T:build
     - name: Run tests
-      run: lein test
+      run: clojure -M:test
+    - name: Smoke test from source
+      run: clojure -M:run --help
+    - name: Build uberjar
+      run: clojure -T:build uber
+    - name: Smoke test uberjar
+      run: java -jar target/uberjar/talispam-*-standalone.jar --help

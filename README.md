@@ -5,34 +5,58 @@ a talispam is a program held to act as a charm to avert spam and bring good mess
 
 ## Very quick roundtrip
 ### Build
-get the sources:
+#### Clojure CLI commands
+
+| Command | Purpose |
+| --- | --- |
+| `clojure` | Start a REPL. |
+| `clojure -M:run --help` | Run the application from source. |
+| `clojure -M:test` | Run all tests; exit with a nonzero status on failure. |
+| `clojure -T:build uber` | Build `target/uberjar/talispam-0.4.1-standalone.jar` with AOT compilation. |
+| `clojure -T:build native-image` | Build the uberjar and then the native executable `target/talispam` (requires GraalVM). |
+| `clojure -T:build clean` | Remove `target/` and its build artifacts. |
+
+#### Local build
+
+Install Java (JDK 25 is used in CI) and [Clojure CLI](https://clojure.org/guides/install_clojure), then get the sources:
 ```console
-$ git clone https://github.com/saidone75/talispam.git -b v0.4.0
-```
-produce an uberjar with leiningen:
-```console
+$ git clone https://github.com/saidone75/talispam.git
 $ cd talispam
-$ lein uberjar
-Compiling talispam.config
-Compiling talispam.core
-[...]
-Compiling talispam.whitelist
-Created /home/saidone/talispam/target/uberjar/talispam-0.4.0.jar
-Created /home/saidone/talispam/target/uberjar/talispam-0.4.0-standalone.jar
 ```
-create a native binary (*need a GraalVM toolchain installed and configured*):
+Run the tests and produce an executable uberjar with tools.build:
 ```console
-$ lein native-image
-Build on Server(pid: 20771, port: 40355)
-[./target/talispam:20771]    classlist:   4,185.77 ms,  2.15 GB
-[...]
-[./target/talispam:20771]      [total]: 244,502.81 ms,  1.98 GB
+$ clojure -M:test
+$ clojure -T:build uber
+$ java -jar target/uberjar/talispam-0.4.1-standalone.jar --help
 ```
-and copy the executable binary (target/talispam) somewhere in your path
+Run directly from source with `clojure -M:run --help`, or start a REPL with `clojure`.
+Project metadata (including the version) lives in `resources/talispam.edn`.
+Use `clojure -T:build clean` to remove build artifacts.
+
+Create a native binary (*requires GraalVM with `native-image` on PATH*):
+```console
+$ clojure -T:build native-image
+```
+Copy `target/talispam` somewhere in your path. Optional build parameters:
+```console
+$ clojure -T:build native-image :optimization "b" :march "native"
+```
+The uberjar is built with AOT compilation and direct linking, following the
+[tools.build application guide](https://clojure.org/guides/tools_build).
+
+### Continuous integration
+
+On pushes and pull requests to `master`, `.github/workflows/clojure.yml` installs
+Java 25 and Clojure CLI, downloads the test and build dependencies, runs
+`clojure -M:test`, checks `clojure -M:run --help`, builds the uberjar with
+`clojure -T:build uber`, and runs the resulting jar with `--help`.
+The native executable is built separately using the local or Docker commands below.
+The `clj-holmes` workflow scans the source files and uploads SARIF results to GitHub.
+
 ### Build with Docker (GraalVM)
 Only Docker with Compose and BuildKit is required on the host. The build uses
 the GraalVM version specified in [docker/Dockerfile](docker/Dockerfile)
-and Leiningen to compile an uberjar and then a native executable.
+and Clojure CLI with tools.build to compile an uberjar and then a native executable.
 
 On Windows, from any directory:
 ```bat

@@ -2,20 +2,16 @@
   (:gen-class))
 
 (require '[clojure.edn :as edn]
+         '[clojure.java.io :as io]
          '[clojure.walk :as w]
          '[talispam.utils :as utils]
          '[immuconf.config :as immu])
 
 (def config (atom {}))
 
-;; embed project metadata during compilation
+;; Embed metadata during AOT compilation, including native-image builds.
 (defmacro ^:private project-metadata []
-  (let [[_ project-name version & options]
-        (edn/read-string (slurp "project.clj"))
-        project (apply hash-map options)]
-    {:name (name project-name)
-     :version version
-     :description (:description project)}))
+  (edn/read-string (slurp (io/resource "talispam.edn"))))
 
 (def ^:private metadata (project-metadata))
 (def program-name (:name metadata))
