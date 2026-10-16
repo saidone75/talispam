@@ -19,8 +19,8 @@ a talispam is a program held to act as a charm to avert spam and bring good mess
 #### Local build
 
 Install Java (JDK 25 is used in CI) and the official [Clojure CLI](https://clojure.org/guides/install_clojure).
-The Debian/Ubuntu `clojure` package may provide only the language launcher,
-which does not support `deps.edn`, `-M`, or `-T`. Verify your installation:
+Your `clojure` package may provide only the language launcher, which does not support `deps.edn`, `-M`, or `-T`.
+Verify your installation:
 ```console
 $ clojure -Sdescribe
 ```
