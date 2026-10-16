@@ -5,34 +5,77 @@ a talispam is a program held to act as a charm to avert spam and bring good mess
 
 ## Very quick roundtrip
 ### Build
-get the sources:
+#### Clojure CLI commands
+
+| Command | Purpose |
+| --- | --- |
+| `clojure` | Start a REPL. |
+| `clojure -M:run --help` | Run the application from source. |
+| `clojure -M:test` | Run all tests; exit with a nonzero status on failure. |
+| `clojure -T:build uber` | Build `target/uberjar/talispam-0.4.1-standalone.jar` with AOT compilation. |
+| `clojure -T:build native-image` | Build the uberjar and then the native executable `target/talispam` (requires GraalVM). |
+| `clojure -T:build clean` | Remove `target/` and its build artifacts. |
+
+#### Local build
+
+Install Java (JDK 25 is used in CI) and the official [Clojure CLI](https://clojure.org/guides/install_clojure).
+The Debian/Ubuntu `clojure` package may provide only the language launcher,
+which does not support `deps.edn`, `-M`, or `-T`. Verify your installation:
 ```console
-$ git clone https://github.com/saidone75/talispam.git -b v0.4.0
+$ clojure -Sdescribe
 ```
-produce an uberjar with leiningen:
+This must print CLI configuration information. If it reports
+`-Sdescribe (No such file or directory)` or `-T:build (No such file or directory)`,
+install the official CLI. On Linux, with Java, Bash, curl, and rlwrap installed:
+```sh
+curl -fL https://github.com/clojure/brew-install/releases/latest/download/linux-install.sh -o /tmp/clojure-linux-install.sh
+chmod +x /tmp/clojure-linux-install.sh
+sudo /tmp/clojure-linux-install.sh
+hash -r
+clojure -Sdescribe
+```
+The installer places `clojure` in `/usr/local/bin`; ensure that directory precedes
+`/usr/bin` in your `PATH` if the old launcher is still selected.
+
+Then get the sources:
 ```console
+$ git clone https://github.com/saidone75/talispam.git
 $ cd talispam
-$ lein uberjar
-Compiling talispam.config
-Compiling talispam.core
-[...]
-Compiling talispam.whitelist
-Created /home/saidone/talispam/target/uberjar/talispam-0.4.0.jar
-Created /home/saidone/talispam/target/uberjar/talispam-0.4.0-standalone.jar
 ```
-create a native binary (*need a GraalVM toolchain installed and configured*):
+Run the tests and produce an executable uberjar with tools.build:
 ```console
-$ lein native-image
-Build on Server(pid: 20771, port: 40355)
-[./target/talispam:20771]    classlist:   4,185.77 ms,  2.15 GB
-[...]
-[./target/talispam:20771]      [total]: 244,502.81 ms,  1.98 GB
+$ clojure -M:test
+$ clojure -T:build uber
+$ java -jar target/uberjar/talispam-0.4.1-standalone.jar --help
 ```
-and copy the executable binary (target/talispam) somewhere in your path
+Run directly from source with `clojure -M:run --help`, or start a REPL with `clojure`.
+Project metadata (including the version) lives in `resources/talispam.edn`.
+Use `clojure -T:build clean` to remove build artifacts.
+
+Create a native binary (*requires GraalVM with `native-image` on PATH*):
+```console
+$ clojure -T:build native-image
+```
+Copy `target/talispam` somewhere in your path. Optional build parameters:
+```console
+$ clojure -T:build native-image :optimization "b" :march "native"
+```
+The uberjar is built with AOT compilation and direct linking, following the
+[tools.build application guide](https://clojure.org/guides/tools_build).
+
+### Continuous integration
+
+On pushes and pull requests to `master`, `.github/workflows/clojure.yml` installs
+Java 25 and Clojure CLI, downloads the test and build dependencies, runs
+`clojure -M:test`, checks `clojure -M:run --help`, builds the uberjar with
+`clojure -T:build uber`, and runs the resulting jar with `--help`.
+The native executable is built separately using the local or Docker commands below.
+The `clj-holmes` workflow scans the source files and uploads SARIF results to GitHub.
+
 ### Build with Docker (GraalVM)
 Only Docker with Compose and BuildKit is required on the host. The build uses
 the GraalVM version specified in [docker/Dockerfile](docker/Dockerfile)
-and Leiningen to compile an uberjar and then a native executable.
+and Clojure CLI with tools.build to compile an uberjar and then a native executable.
 
 On Windows, from any directory:
 ```bat
@@ -44,6 +87,14 @@ $ ./build-docker.sh
 ```
 Both scripts run the build directly without arguments and produce `dist/talispam`, a **Linux** executable.
 Copy it to the target Linux machine and configure `~/.talispam` as described below.
+
+Pass `--no-cache` to rebuild all Docker image layers without reusing the layer cache:
+```console
+$ ./build-docker.sh --no-cache
+```
+On Windows, use `build-docker.bat --no-cache`.
+Dependency downloads stored in BuildKit cache mounts are still reused.
+Use `--help` to display the available options.
 
 The default native build uses `-Os` to optimize executable size and
 `-march=compatibility` so the executable can run on older CPUs.

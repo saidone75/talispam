@@ -1,0 +1,17 @@
+{:paths ["src" "resources"]
+ :deps {org.clojure/clojure {:mvn/version "1.12.6"}
+        russellwhitaker/immuconf {:mvn/version "0.3.0"}
+        com.cognitect/transit-clj {:mvn/version "1.1.363"}
+        cli-matic/cli-matic {:mvn/version "0.5.4"}
+        org.jsoup/jsoup {:mvn/version "1.23.2"}
+        com.stuartsierra/frequencies {:mvn/version "0.1.0"}
+        tlight/spin {:mvn/version "0.0.4"}
+        com.github.clj-easy/graal-build-time {:mvn/version "1.0.6"}}
+ :aliases
+ {:run {:main-opts ["-m" "talispam.core"]}
+  :test {:extra-paths ["test"]
+         :extra-deps {io.github.cognitect-labs/test-runner
+                      {:git/tag "v0.5.1" :git/sha "dfb30dd"}}
+         :main-opts ["-m" "cognitect.test-runner"]}
+  :build {:deps {io.github.clojure/tools.build {:mvn/version "0.10.12"}}
+          :ns-default build}}}
