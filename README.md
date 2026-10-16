@@ -88,6 +88,14 @@ $ ./build-docker.sh
 Both scripts run the build directly without arguments and produce `dist/talispam`, a **Linux** executable.
 Copy it to the target Linux machine and configure `~/.talispam` as described below.
 
+Pass `--no-cache` to rebuild all Docker image layers without reusing the layer cache:
+```console
+$ ./build-docker.sh --no-cache
+```
+On Windows, use `build-docker.bat --no-cache`.
+Dependency downloads stored in BuildKit cache mounts are still reused.
+Use `--help` to display the available options.
+
 The default native build uses `-Os` to optimize executable size and
 `-march=compatibility` so the executable can run on older CPUs.
 
