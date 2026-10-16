@@ -63,15 +63,6 @@ $ clojure -T:build native-image :optimization "b" :march "native"
 The uberjar is built with AOT compilation and direct linking, following the
 [tools.build application guide](https://clojure.org/guides/tools_build).
 
-### Continuous integration
-
-On pushes and pull requests to `master`, `.github/workflows/clojure.yml` installs
-Java 25 and Clojure CLI, downloads the test and build dependencies, runs
-`clojure -M:test`, checks `clojure -M:run --help`, builds the uberjar with
-`clojure -T:build uber`, and runs the resulting jar with `--help`.
-The native executable is built separately using the local or Docker commands below.
-The `clj-holmes` workflow scans the source files and uploads SARIF results to GitHub.
-
 ### Build with Docker (GraalVM)
 Only Docker with Compose and BuildKit is required on the host. The build uses
 the GraalVM version specified in [docker/Dockerfile](docker/Dockerfile)
