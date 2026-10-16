@@ -18,7 +18,26 @@ a talispam is a program held to act as a charm to avert spam and bring good mess
 
 #### Local build
 
-Install Java (JDK 25 is used in CI) and [Clojure CLI](https://clojure.org/guides/install_clojure), then get the sources:
+Install Java (JDK 25 is used in CI) and the official [Clojure CLI](https://clojure.org/guides/install_clojure).
+The Debian/Ubuntu `clojure` package may provide only the language launcher,
+which does not support `deps.edn`, `-M`, or `-T`. Verify your installation:
+```console
+$ clojure -Sdescribe
+```
+This must print CLI configuration information. If it reports
+`-Sdescribe (No such file or directory)` or `-T:build (No such file or directory)`,
+install the official CLI. On Linux, with Java, Bash, curl, and rlwrap installed:
+```sh
+curl -fL https://github.com/clojure/brew-install/releases/latest/download/linux-install.sh -o /tmp/clojure-linux-install.sh
+chmod +x /tmp/clojure-linux-install.sh
+sudo /tmp/clojure-linux-install.sh
+hash -r
+clojure -Sdescribe
+```
+The installer places `clojure` in `/usr/local/bin`; ensure that directory precedes
+`/usr/bin` in your `PATH` if the old launcher is still selected.
+
+Then get the sources:
 ```console
 $ git clone https://github.com/saidone75/talispam.git
 $ cd talispam
