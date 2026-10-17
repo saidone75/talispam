@@ -12,7 +12,7 @@ a talispam is a program held to act as a charm to avert spam and bring good mess
 | `clojure` | Start a REPL. |
 | `clojure -M:run --help` | Run the application from source. |
 | `clojure -M:test` | Run all tests; exit with a nonzero status on failure. |
-| `clojure -T:build uber` | Build `target/uberjar/talispam-0.4.1-standalone.jar` with AOT compilation. |
+| `clojure -T:build uber` | Build `target/uberjar/talispam-0.4.2-standalone.jar` with AOT compilation. |
 | `clojure -T:build native-image` | Build the uberjar and then the native executable `target/talispam` (requires GraalVM). |
 | `clojure -T:build clean` | Remove `target/` and its build artifacts. |
 
@@ -46,7 +46,7 @@ Run the tests and produce an executable uberjar with tools.build:
 ```console
 $ clojure -M:test
 $ clojure -T:build uber
-$ java -jar target/uberjar/talispam-0.4.1-standalone.jar --help
+$ java -jar target/uberjar/talispam-0.4.2-standalone.jar --help
 ```
 Run directly from source with `clojure -M:run --help`, or start a REPL with `clojure`.
 Project metadata (including the version) lives in `resources/talispam.edn`.
@@ -135,7 +135,6 @@ the file path is set by `:whitelist :location`.
 train bayesian classifier:
 ```console
 $ talispam learn
-talispam 0.4.0
 building classifier db ✓
 done!
 ```
@@ -152,7 +151,7 @@ I imagined it as a drop-in replacement for SpamAssassin on my personal mail serv
 ```console
 $ cat .talispam/spam/00460.8996dc28ab56dd7b6f35b956deceaf22 | talispam | head -n 5
 From ilug-admin@linux.ie  Wed Sep 25 10:29:22 2002
-X-Spam-Checker-Version: talispam 0.3.0 on kugelmass
+X-Spam-Checker-Version: talispam 0.4.2 on kugelmass
 X-Spam-Flag: YES
 X-Spam-Score: 98
 Return-Path: <ilug-admin@linux.ie>
@@ -179,7 +178,7 @@ USAGE:
  talispam [global-options] command [command options] [arguments...]
 
 VERSION:
- 0.4.0
+ 0.4.2
 
 COMMANDS:
    learn                train talispam classifier

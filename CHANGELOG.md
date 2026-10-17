@@ -2,7 +2,11 @@
 
 ## Unreleased
 
-**[compare](https://github.com/saidone75/talispam/compare/v0.4.1...HEAD)**
+**[compare](https://github.com/saidone75/talispam/compare/v0.4.2...HEAD)**
+
+## 0.4.2 (2026-10-17)
+
+**[compare](https://github.com/saidone75/talispam/compare/v0.4.1...v0.4.2)**
 
 ### Added
 
