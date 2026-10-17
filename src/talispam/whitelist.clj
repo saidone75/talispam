@@ -15,30 +15,53 @@
   (if (.exists (io/file
                 (:location (:whitelist @c/config))))
     (reset! whitelist
-            (set (s/split (slurp (:location (:whitelist @c/config))) #"\n")))
+            (set (remove s/blank? (s/split-lines (slurp (:location (:whitelist @c/config)))))))
     (reset! whitelist #{})))
 
 (defn whitelisted? [address]
   (when (nil? @whitelist)
     (load-whitelist))
-  (or
-   ;; full address
-   (contains? @whitelist address)
-   ;; host or "domain"
-   (not-every?
-    nil?
-    (map
-     #(re-matches (re-pattern (str ".*" % "$")) address)
-     @whitelist))))
+  (and (some? address)
+       (or
+        ;; full address
+        (contains? @whitelist address)
+        ;; host or "domain"
+        (not-every?
+         nil?
+         (map
+          #(re-matches (re-pattern (str ".*" % "$")) address)
+          @whitelist)))))
 
-(defn- add-to-whitelist [address]
-  (when (and (not (nil? address)) (not (whitelisted? address)))
-    (swap! whitelist conj address)))
+(defn- whitelist-file ^java.io.File []
+  (io/file (get-in @c/config [:whitelist :location])))
 
-(defn print-whitelist-from-corpus [parms]
+(defn print-whitelist [_]
   (load-whitelist)
-  (doall
-   (map
-    #(add-to-whitelist (utils/get-sender %))
-    (corpus/ham)))
-  (println (s/join "\n" (sort@whitelist))))
+  (when (seq @whitelist)
+    (println (s/join "\n" (sort @whitelist)))))
+
+(defn ham [_]
+  (load-whitelist)
+  (let [addresses (keep utils/get-sender (corpus/ham))
+        entries (into @whitelist addresses)
+        file (whitelist-file)]
+    (io/make-parents file)
+    (spit file (if (seq entries) (str (s/join "\n" (sort entries)) "\n") ""))
+    (reset! whitelist entries)
+    (println (str "Saved " (count entries) " whitelist entries to " file))))
+
+(defn edit-whitelist [_]
+  (let [file (whitelist-file)
+        editor (or (not-empty (System/getenv "VISUAL"))
+                   (not-empty (System/getenv "EDITOR")) "vi")]
+    (io/make-parents file)
+    (.createNewFile file)
+    (let [process (-> (ProcessBuilder.
+                      ^"[Ljava.lang.String;" (into-array String ["/bin/sh" "-c" (str "exec " editor " \"$1\"")
+                                       "talispam-editor" (.getAbsolutePath file)]))
+                     (.inheritIO)
+                     (.start))
+          status (.waitFor process)]
+      (reset! whitelist nil)
+      (when-not (zero? status)
+        (throw (ex-info (str "Editor exited with status " status) {:status status}))))))
