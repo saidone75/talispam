@@ -30,7 +30,7 @@ SET "RESULT=0"
 IF ERRORLEVEL 1 GOTO FAILED
 %COMPOSE_CMD% run --rm --no-deps build
 IF ERRORLEVEL 1 GOTO FAILED
-ECHO Linux native executable created: %~dp0dist\talispam
+ECHO Linux native executable created in: %~dp0dist\ ^(talispam-VERSION^)
 GOTO END
 
 :FAILED

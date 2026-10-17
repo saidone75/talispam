@@ -12,8 +12,8 @@ a talispam is a program held to act as a charm to avert spam and bring good mess
 | `clojure` | Start a REPL. |
 | `clojure -M:run --help` | Run the application from source. |
 | `clojure -M:test` | Run all tests; exit with a nonzero status on failure. |
-| `clojure -T:build uber` | Build `target/uberjar/talispam-0.4.1-standalone.jar` with AOT compilation. |
-| `clojure -T:build native-image` | Build the uberjar and then the native executable `target/talispam` (requires GraalVM). |
+| `clojure -T:build uber` | Build `target/uberjar/talispam-0.4.2-standalone.jar` with AOT compilation. |
+| `clojure -T:build native-image` | Build the uberjar and then the native executable `target/talispam-0.4.2` (requires GraalVM). |
 | `clojure -T:build clean` | Remove `target/` and its build artifacts. |
 
 #### Local build
@@ -46,7 +46,7 @@ Run the tests and produce an executable uberjar with tools.build:
 ```console
 $ clojure -M:test
 $ clojure -T:build uber
-$ java -jar target/uberjar/talispam-0.4.1-standalone.jar --help
+$ java -jar target/uberjar/talispam-0.4.2-standalone.jar --help
 ```
 Run directly from source with `clojure -M:run --help`, or start a REPL with `clojure`.
 Project metadata (including the version) lives in `resources/talispam.edn`.
@@ -56,7 +56,7 @@ Create a native binary (*requires GraalVM with `native-image` on PATH*):
 ```console
 $ clojure -T:build native-image
 ```
-Copy `target/talispam` somewhere in your path. Optional build parameters:
+Copy `target/talispam-0.4.2` somewhere in your path, renaming it to `talispam` for the commands below. Optional build parameters:
 ```console
 $ clojure -T:build native-image :optimization "b" :march "native"
 ```
@@ -76,8 +76,9 @@ On Linux/macOS:
 ```console
 $ ./build-docker.sh
 ```
-Both scripts run the build directly without arguments and produce `dist/talispam`, a **Linux** executable.
-Copy it to the target Linux machine and configure `~/.talispam` as described below.
+Both scripts run the build directly without arguments and produce `dist/talispam-0.4.2`, a **Linux** executable.
+The filename uses the version in `resources/talispam.edn`.
+Copy it to the target Linux machine as `talispam` and configure `~/.talispam` as described below.
 
 Pass `--no-cache` to rebuild all Docker image layers without reusing the layer cache:
 ```console
@@ -121,11 +122,26 @@ own `:ham-dirs`, `:spam-dirs`, `:ham-mboxes` and `:spam-mboxes` before training.
 Manage trusted senders with:
 ```console
 $ talispam whitelist ham
+$ talispam whitelist compact
 $ talispam whitelist edit
 $ talispam whitelist print
 ```
 `ham` scans the configured ham directories and mbox files, merges their
 senders with the existing whitelist, and saves a sorted list without duplicates.
+`compact` interactively proposes merging senders into `@exact-host` entries.
+Only hosts with at least two distinct addresses after PRVS normalization are
+proposed. For each host it shows the address count, up to three examples and the proposed
+entry. Answer `y` to trust all senders on that exact host (excluding subdomains),
+or `n` / Enter to keep individual addresses. Every proposed host requires a decision,
+including shared providers such as Gmail or Amazon SES; there is no automatic
+provider classification. Already whitelisted exact hosts are skipped.
+`q` or end of input cancels the operation without saving any changes.
+PRVS prefixes (`prvs=token=` and `msprvs1=token=`) are normalized automatically,
+retaining the underlying address; ordinary plus-address tags are preserved.
+Duplicates and addresses covered by explicit `@exact-host` entries are removed.
+All changes are saved after the questions, with a uniquely named `.bak` backup
+beside the whitelist. Run it after `whitelist ham` to compact new addresses.
+Sender checks also normalize PRVS tokens so future token variants still match.
 `edit` opens the configured whitelist file using `$VISUAL`, then `$EDITOR`,
 falling back to `vi`; editor arguments are supported. `print` prints the saved
 entries without scanning the corpus. These commands do not need a trained database
@@ -135,7 +151,6 @@ the file path is set by `:whitelist :location`.
 train bayesian classifier:
 ```console
 $ talispam learn
-talispam 0.4.0
 building classifier db ✓
 done!
 ```
@@ -152,7 +167,7 @@ I imagined it as a drop-in replacement for SpamAssassin on my personal mail serv
 ```console
 $ cat .talispam/spam/00460.8996dc28ab56dd7b6f35b956deceaf22 | talispam | head -n 5
 From ilug-admin@linux.ie  Wed Sep 25 10:29:22 2002
-X-Spam-Checker-Version: talispam 0.3.0 on kugelmass
+X-Spam-Checker-Version: talispam 0.4.2 on kugelmass
 X-Spam-Flag: YES
 X-Spam-Score: 98
 Return-Path: <ilug-admin@linux.ie>
@@ -179,19 +194,36 @@ USAGE:
  talispam [global-options] command [command options] [arguments...]
 
 VERSION:
- 0.4.0
+ 0.4.2
 
 COMMANDS:
    learn                train talispam classifier
    score                print ham/spam score for stdin
-   whitelist            manage trusted senders (ham, edit, print)
+   whitelist            manage trusted senders (ham, compact, edit, print)
    init                 create default configuration and download dictionaries
-   print-db             print all words from classifier db by spam score
+   db                   inspect the classifier database (print, info)
    stats                print stats summary for a mbox
 
 GLOBAL OPTIONS:
    -?, --help
 ```
+Inspect the trained classifier database with:
+```console
+$ talispam db print
+$ talispam db info
+Ham messages: 2500
+Spam messages: 1000
+Words: 42000
+Database size: 1234567 bytes
+```
+`db print` replaces `print-db` and preserves its output: words sorted by spam
+score, with scores formatted to three decimal places. Word probabilities are
+calculated directly from the stored training counts, independently of the dictionary. `db info` reports the
+ham/spam message counts saved during training, the number of distinct words
+in the database, and its on-disk size in bytes. The numbers above are examples.
+Both commands use the database configured under `:filter-db :location` and do
+not require a dictionary. The `print-db` command has been removed.
+
 ### Performance
 on my little mail server (Intel Atom D2550 @ 1.86GHz) is extraordinarily fast, expecially in comparison with SpamAssassin (to be honest, not directly comparable because SpamAssassin perform a lot more checks):
 ```console

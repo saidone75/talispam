@@ -108,12 +108,10 @@
       (run! deref futures))))
 
 (defn db-by-score [& [asc]]
-  (sort-by
-   val
-   (if asc
-     #(< %1 %2)
-     #(> %1 %2)) 
-   (reduce
-    #(assoc %1 (name (key %2)) (score (str (key %2))))
-    {}
-    @db/words)))
+  (locking db/words
+    ;; Inspect stored word statistics directly, independently of message parsing
+    ;; and the optional dictionary used during training and classification.
+    (sort-by val
+             (if asc < >)
+             (into {} (map (fn [word] [(name word) (bayesian-spam-probability word)]))
+                   (keys @db/words)))))
