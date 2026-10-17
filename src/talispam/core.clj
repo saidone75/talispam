@@ -97,6 +97,9 @@
                   :subcommands [{:command "ham"
                                  :description ["add senders from the ham corpus and save the whitelist"]
                                  :opts [] :runs w/ham}
+                                {:command "compact"
+                                 :description ["interactively merge senders by domain, with backup"]
+                                 :opts [] :runs w/compact}
                                 {:command "edit"
                                  :description ["edit the whitelist with the system editor"]
                                  :opts [] :runs w/edit-whitelist}

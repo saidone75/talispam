@@ -4,6 +4,14 @@
 
 **[compare](https://github.com/saidone75/talispam/compare/v0.4.2...HEAD)**
 
+### Added
+
+- `talispam whitelist compact` shows example senders and asks before merging each exact domain, normalizes PRVS senders, and saves a backup before changes.
+
+### Fixed
+
+- Match explicit `@domain` whitelist entries literally against the exact host, and recognize changing PRVS tokens when checking senders.
+
 ## 0.4.2 (2026-10-17)
 
 **[compare](https://github.com/saidone75/talispam/compare/v0.4.1...v0.4.2)**

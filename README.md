@@ -121,11 +121,26 @@ own `:ham-dirs`, `:spam-dirs`, `:ham-mboxes` and `:spam-mboxes` before training.
 Manage trusted senders with:
 ```console
 $ talispam whitelist ham
+$ talispam whitelist compact
 $ talispam whitelist edit
 $ talispam whitelist print
 ```
 `ham` scans the configured ham directories and mbox files, merges their
 senders with the existing whitelist, and saves a sorted list without duplicates.
+`compact` interactively proposes merging senders into `@exact-host` entries.
+Only hosts with at least two distinct addresses after PRVS normalization are
+proposed. For each host it shows the address count, up to three examples and the proposed
+entry. Answer `y` to trust all senders on that exact host (excluding subdomains),
+or `n` / Enter to keep individual addresses. Every proposed host requires a decision,
+including shared providers such as Gmail or Amazon SES; there is no automatic
+provider classification. Already whitelisted exact hosts are skipped.
+`q` or end of input cancels the operation without saving any changes.
+PRVS prefixes (`prvs=token=` and `msprvs1=token=`) are normalized automatically,
+retaining the underlying address; ordinary plus-address tags are preserved.
+Duplicates and addresses covered by explicit `@exact-host` entries are removed.
+All changes are saved after the questions, with a uniquely named `.bak` backup
+beside the whitelist. Run it after `whitelist ham` to compact new addresses.
+Sender checks also normalize PRVS tokens so future token variants still match.
 `edit` opens the configured whitelist file using `$VISUAL`, then `$EDITOR`,
 falling back to `vi`; editor arguments are supported. `print` prints the saved
 entries without scanning the corpus. These commands do not need a trained database
@@ -183,7 +198,7 @@ VERSION:
 COMMANDS:
    learn                train talispam classifier
    score                print ham/spam score for stdin
-   whitelist            manage trusted senders (ham, edit, print)
+   whitelist            manage trusted senders (ham, compact, edit, print)
    init                 create default configuration and download dictionaries
    print-db             print all words from classifier db by spam score
    stats                print stats summary for a mbox
