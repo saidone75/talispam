@@ -63,15 +63,6 @@ $ clojure -T:build native-image :optimization "b" :march "native"
 The uberjar is built with AOT compilation and direct linking, following the
 [tools.build application guide](https://clojure.org/guides/tools_build).
 
-### Continuous integration
-
-On pushes and pull requests to `master`, `.github/workflows/clojure.yml` installs
-Java 25 and Clojure CLI, downloads the test and build dependencies, runs
-`clojure -M:test`, checks `clojure -M:run --help`, builds the uberjar with
-`clojure -T:build uber`, and runs the resulting jar with `--help`.
-The native executable is built separately using the local or Docker commands below.
-The `clj-holmes` workflow scans the source files and uploads SARIF results to GitHub.
-
 ### Build with Docker (GraalVM)
 Only Docker with Compose and BuildKit is required on the host. The build uses
 the GraalVM version specified in [docker/Dockerfile](docker/Dockerfile)
@@ -115,12 +106,31 @@ GraalVM Community treats `-O3` the same as `-O2`; profile-guided optimization
 requires Oracle GraalVM. See the [GraalVM optimization guide](https://www.graalvm.org/jdk25/reference-manual/native-image/optimizations-and-performance/).
 
 ### Configuration
-clone the sample configuration from [talispam-config](https://github.com/saidone75/talispam-config) on your ~/.talispam folder:
+Create the default configuration in `~/.talispam`:
 ```console
-$ cd ~
-$ git clone https://github.com/saidone75/talispam-config.git -b v0.3.0 .talispam
+$ talispam init
 ```
-(WARNING: contains a quite big spam/ham training corpus, you may want to train the filter against your own collections)
+This downloads `talispam.cfg.edn`, `en_20k.txt` and `it_30k.txt` from
+[talispam-config](https://github.com/saidone75/talispam-config), creates an empty
+`whitelist.txt` and the configured ham/spam directories. Existing files are
+preserved; rerunning the command installs missing files. Internet access is
+required for downloads. The training corpus is not downloaded: populate the
+ham/spam directories or set `:training-corpus` in the configuration to your
+own `:ham-dirs`, `:spam-dirs`, `:ham-mboxes` and `:spam-mboxes` before training.
+
+Manage trusted senders with:
+```console
+$ talispam whitelist ham
+$ talispam whitelist edit
+$ talispam whitelist print
+```
+`ham` scans the configured ham directories and mbox files, merges their
+senders with the existing whitelist, and saves a sorted list without duplicates.
+`edit` opens the configured whitelist file using `$VISUAL`, then `$EDITOR`,
+falling back to `vi`; editor arguments are supported. `print` prints the saved
+entries without scanning the corpus. These commands do not need a trained database
+or compiled dictionary. Whitelist matching is enabled by `:whitelist :use`;
+the file path is set by `:whitelist :location`.
 
 train bayesian classifier:
 ```console
@@ -174,7 +184,8 @@ VERSION:
 COMMANDS:
    learn                train talispam classifier
    score                print ham/spam score for stdin
-   whitelist            print a list of addresses in ham corpus
+   whitelist            manage trusted senders (ham, edit, print)
+   init                 create default configuration and download dictionaries
    print-db             print all words from classifier db by spam score
    stats                print stats summary for a mbox
 

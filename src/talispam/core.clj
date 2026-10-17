@@ -10,6 +10,7 @@
          '[talispam.filter :as f]
          '[talispam.utils :as utils]
          '[talispam.whitelist :as w]
+         '[talispam.init :as init]
          '[cli-matic.core :refer [run-cmd]]
          '[expound.alpha :as ex]
          '[com.stuartsierra.frequencies :as freq]
@@ -92,9 +93,20 @@
                   :opts []
                   :runs        classify-score}
                  {:command     "whitelist"
-                  :description ["print a list of addresses in ham corpus"]
+                  :description ["manage trusted senders"]
+                  :subcommands [{:command "ham"
+                                 :description ["add senders from the ham corpus and save the whitelist"]
+                                 :opts [] :runs w/ham}
+                                {:command "edit"
+                                 :description ["edit the whitelist with the system editor"]
+                                 :opts [] :runs w/edit-whitelist}
+                                {:command "print"
+                                 :description ["print the whitelist"]
+                                 :opts [] :runs w/print-whitelist}]}
+                 {:command "init"
+                  :description ["create default configuration and download dictionaries"]
                   :opts []
-                  :runs        w/print-whitelist-from-corpus}
+                  :runs init/initialize}
                  {:command     "print-db"
                   :description ["print all words from classifier db by spam score"]
                   :opts []
@@ -105,10 +117,11 @@
                   :runs        stats}]})
 
 (defn -main [& args]
-  (when-not (some #{"--help" "-?"} args)
+  (when-not (or (= "init" (first args)) (some #{"--help" "-?"} args))
     (try
       (c/load-config (utils/expand-home "~/.talispam/talispam.cfg.edn"))
-      (when (get-in @c/config [:dictionary :use])
+      (when (and (or (nil? args) (= "score" (first args)) (= "learn" (first args)))
+                 (get-in @c/config [:dictionary :use]))
         (dict/load-dictionary!))
       (catch Exception e (exit 1 (.getMessage e)))))
   (if (nil? args)
