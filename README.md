@@ -13,7 +13,7 @@ a talispam is a program held to act as a charm to avert spam and bring good mess
 | `clojure -M:run --help` | Run the application from source. |
 | `clojure -M:test` | Run all tests; exit with a nonzero status on failure. |
 | `clojure -T:build uber` | Build `target/uberjar/talispam-0.4.2-standalone.jar` with AOT compilation. |
-| `clojure -T:build native-image` | Build the uberjar and then the native executable `target/talispam` (requires GraalVM). |
+| `clojure -T:build native-image` | Build the uberjar and then the native executable `target/talispam-0.4.2` (requires GraalVM). |
 | `clojure -T:build clean` | Remove `target/` and its build artifacts. |
 
 #### Local build
@@ -56,7 +56,7 @@ Create a native binary (*requires GraalVM with `native-image` on PATH*):
 ```console
 $ clojure -T:build native-image
 ```
-Copy `target/talispam` somewhere in your path. Optional build parameters:
+Copy `target/talispam-0.4.2` somewhere in your path, renaming it to `talispam` for the commands below. Optional build parameters:
 ```console
 $ clojure -T:build native-image :optimization "b" :march "native"
 ```
@@ -76,8 +76,9 @@ On Linux/macOS:
 ```console
 $ ./build-docker.sh
 ```
-Both scripts run the build directly without arguments and produce `dist/talispam`, a **Linux** executable.
-Copy it to the target Linux machine and configure `~/.talispam` as described below.
+Both scripts run the build directly without arguments and produce `dist/talispam-0.4.2`, a **Linux** executable.
+The filename uses the version in `resources/talispam.edn`.
+Copy it to the target Linux machine as `talispam` and configure `~/.talispam` as described below.
 
 Pass `--no-cache` to rebuild all Docker image layers without reusing the layer cache:
 ```console

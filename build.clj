@@ -6,6 +6,7 @@
 (def lib 'talispam/talispam)
 (def class-dir "target/classes")
 (def uber-file (format "target/uberjar/talispam-%s-standalone.jar" (:version metadata)))
+(def native-file (format "target/talispam-%s" (:version metadata)))
 (def basis (delay (b/create-basis {:project "deps.edn" :user nil})))
 
 (defn clean
@@ -41,6 +42,6 @@
                             (str "-O" optimization) (str "-march=" march)
                             "-H:ReflectionConfigurationFiles=./reflectconfig.json"
                             "--features=clj_easy.graal_build_time.InitClojureClasses"
-                            "-jar" uber-file "target/talispam"]})]
+                            "-jar" uber-file native-file]})]
     (when-not (zero? (:exit result))
       (throw (ex-info "native-image failed" result)))))

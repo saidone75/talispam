@@ -8,6 +8,10 @@
 
 - `talispam whitelist compact` shows example senders and asks before merging each exact domain, normalizes PRVS senders, and saves a backup before changes.
 
+### Changed
+
+- Include the project version in GraalVM executable filenames for local and Docker builds (for example, `talispam-0.4.2`).
+
 ### Fixed
 
 - Match explicit `@domain` whitelist entries literally against the exact host, and recognize changing PRVS tokens when checking senders.

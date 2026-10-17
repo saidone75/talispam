@@ -28,13 +28,15 @@ COPY reflectconfig.json ./
 RUN --mount=type=cache,target=/root/.m2 \
     clojure -T:build uber \
     && mkdir -p /out \
+    && set -- target/uberjar/*-standalone.jar \
+    && TALISPAM_BINARY="$(basename "$1" -standalone.jar)" \
     && native-image -J-XX:MaxRAMPercentage=60.0 \
         -O${NATIVE_OPTIMIZATION} -march=${NATIVE_MARCH} \
         -H:ReflectionConfigurationFiles=./reflectconfig.json \
         --features=clj_easy.graal_build_time.InitClojureClasses \
-        -jar target/uberjar/*-standalone.jar /out/talispam \
-    && test -x /out/talispam
+        -jar "$1" "/out/$TALISPAM_BINARY" \
+    && test -x "/out/$TALISPAM_BINARY"
 
 # Export only the executable with Docker BuildKit's local output.
 FROM scratch AS artifact
-COPY --from=builder /out/talispam /talispam
+COPY --from=builder /out/ /

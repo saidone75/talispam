@@ -10,6 +10,6 @@ services:
         NATIVE_MARCH: ${NATIVE_MARCH:-compatibility}
     network_mode: none
     entrypoint: ["/bin/sh", "-c"]
-    command: ["cp /out/talispam /dist/talispam && chmod 755 /dist/talispam"]
+    command: ["cp /out/talispam-* /dist/ && chmod 755 /dist/talispam-*"]
     volumes:
       - ../dist:/dist
