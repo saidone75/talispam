@@ -19,7 +19,7 @@
     (reset! whitelist #{})))
 
 (defn whitelisted? [address]
-  (when (false? @whitelist)
+  (when (nil? @whitelist)
     (load-whitelist))
   (or
    ;; full address
