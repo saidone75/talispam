@@ -4,6 +4,7 @@
 (set! *warn-on-reflection* true)
 
 (require '[clojure.string :as s]
+         '[clojure.java.io :as io]
          '[talispam.config :as c]
          '[talispam.db :as db]
          '[talispam.dictionary :as dict]
@@ -61,6 +62,13 @@
            (map #(str (key %) " " (format "%.3f" (val %)))
                 (f/db-by-score)))))
 
+(defn- db-info [_]
+  (load-db)
+  (println "Ham messages:" @db/total-hams)
+  (println "Spam messages:" @db/total-spams)
+  (println "Words:" (count @db/words))
+  (println "Database size:" (.length (io/file (get-in @c/config [:filter-db :location]))) "bytes"))
+
 (defn- stats [options]
   (load-db)
   (spin :type :spin1 :ms 200)
@@ -110,10 +118,14 @@
                   :description ["create default configuration and download dictionaries"]
                   :opts []
                   :runs init/initialize}
-                 {:command     "print-db"
-                  :description ["print all words from classifier db by spam score"]
-                  :opts []
-                  :runs        print-db}
+                 {:command     "db"
+                  :description ["inspect the classifier database"]
+                  :subcommands [{:command "print"
+                                 :description ["print all words from classifier db by spam score"]
+                                 :opts [] :runs print-db}
+                                {:command "info"
+                                 :description ["show training counts, word count and database file size"]
+                                 :opts [] :runs db-info}]}
                  {:command     "stats"
                   :description ["print stats summary for a mbox"]
                   :opts        [{:option "mbox" :short "m" :default :present :as "mbox file" :type :string :spec ::mbox}]

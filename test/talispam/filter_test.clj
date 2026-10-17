@@ -3,6 +3,7 @@
             [talispam.config :as config]
             [talispam.corpus :as corpus]
             [talispam.db :as db]
+            [talispam.dictionary :as dictionary]
             [talispam.filter :as filter]))
 
 (use-fixtures :each
@@ -45,3 +46,17 @@
     (is (= 0.0 (chi Double/POSITIVE_INFINITY 2)))
     (is (< 0.99 (fisher (repeat 2000 0.5) 2000) 1.0000001))
     (is (= 0.0 (fisher (repeat 2000 0.01) 2000)))))
+
+(deftest database-word-scores-do-not-depend-on-dictionary
+  (reset! db/words {:hello [10 0] :offer [0 20] :shared [5 10]})
+  (reset! db/total-hams 10)
+  (reset! db/total-spams 20)
+  (swap! config/config assoc :dictionary {:use true})
+  (with-redefs [dictionary/dictionary (atom #{})]
+    (let [descending (filter/db-by-score)
+          probabilities (into {} descending)]
+      (is (= ["offer" "shared" "hello"] (mapv key descending)))
+      (is (< (Math/abs (- (/ 0.5 11) (get probabilities "hello"))) 1e-12))
+      (is (< (Math/abs (- (/ 20.5 21) (get probabilities "offer"))) 1e-12))
+      (is (= 0.5 (get probabilities "shared")))
+      (is (= ["hello" "shared" "offer"] (mapv key (filter/db-by-score true)))))))

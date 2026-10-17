@@ -6,13 +6,19 @@
 
 ### Added
 
+- `talispam db info` reports training ham/spam message counts, the number of distinct words and the database file size in bytes.
+
 - `talispam whitelist compact` shows example senders and asks before merging each exact domain, normalizes PRVS senders, and saves a backup before changes.
 
 ### Changed
 
+- Replace `talispam print-db` with `talispam db print`, preserving the existing output.
+
 - Include the project version in GraalVM executable filenames for local and Docker builds (for example, `talispam-0.4.2`).
 
 ### Fixed
+
+- Compute `db print` word probabilities directly from stored training counts, avoiding neutral scores caused by an unloaded dictionary.
 
 - Match explicit `@domain` whitelist entries literally against the exact host, and recognize changing PRVS tokens when checking senders.
 

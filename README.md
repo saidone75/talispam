@@ -201,12 +201,29 @@ COMMANDS:
    score                print ham/spam score for stdin
    whitelist            manage trusted senders (ham, compact, edit, print)
    init                 create default configuration and download dictionaries
-   print-db             print all words from classifier db by spam score
+   db                   inspect the classifier database (print, info)
    stats                print stats summary for a mbox
 
 GLOBAL OPTIONS:
    -?, --help
 ```
+Inspect the trained classifier database with:
+```console
+$ talispam db print
+$ talispam db info
+Ham messages: 2500
+Spam messages: 1000
+Words: 42000
+Database size: 1234567 bytes
+```
+`db print` replaces `print-db` and preserves its output: words sorted by spam
+score, with scores formatted to three decimal places. Word probabilities are
+calculated directly from the stored training counts, independently of the dictionary. `db info` reports the
+ham/spam message counts saved during training, the number of distinct words
+in the database, and its on-disk size in bytes. The numbers above are examples.
+Both commands use the database configured under `:filter-db :location` and do
+not require a dictionary. The `print-db` command has been removed.
+
 ### Performance
 on my little mail server (Intel Atom D2550 @ 1.86GHz) is extraordinarily fast, expecially in comparison with SpamAssassin (to be honest, not directly comparable because SpamAssassin perform a lot more checks):
 ```console
