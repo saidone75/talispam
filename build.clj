@@ -49,7 +49,6 @@
   (let [result (b/process {:command-args
                            ["native-image" "-J-Xmx3g"
                             (str "-O" optimization) (str "-march=" march)
-                            "-H:ReflectionConfigurationFiles=./reflectconfig.json"
                             "--features=clj_easy.graal_build_time.InitClojureClasses"
                             "-jar" uber-file native-file]})]
     (when-not (zero? (:exit result))

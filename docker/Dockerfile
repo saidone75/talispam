@@ -24,7 +24,6 @@ RUN --mount=type=cache,target=/root/.m2 clojure -P -M \
 
 COPY src ./src
 COPY resources ./resources
-COPY reflectconfig.json ./
 RUN --mount=type=cache,target=/root/.m2 \
     clojure -T:build uber \
     && mkdir -p /out \
@@ -32,7 +31,6 @@ RUN --mount=type=cache,target=/root/.m2 \
     && TALISPAM_BINARY="$(basename "$1" -standalone.jar)" \
     && native-image -J-XX:MaxRAMPercentage=60.0 \
         -O${NATIVE_OPTIMIZATION} -march=${NATIVE_MARCH} \
-        -H:ReflectionConfigurationFiles=./reflectconfig.json \
         --features=clj_easy.graal_build_time.InitClojureClasses \
         -jar "$1" "/out/$TALISPAM_BINARY" \
     && test -x "/out/$TALISPAM_BINARY"

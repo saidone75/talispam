@@ -1,5 +1,5 @@
 {:name "talispam"
- :version "0.4.3"
+ :version "0.5.0-SNAPSHOT"
  :description "a Bayesian mail filter"
  :url "https://github.com/saidone75/talispam"
  :license {:name "MIT"
