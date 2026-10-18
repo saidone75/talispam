@@ -4,6 +4,12 @@
 
 **[compare](https://github.com/saidone75/talispam/compare/v0.4.3...HEAD)**
 
+### Added
+
+- `talispam whitelist compact` accepts `A` to approve the current and all remaining domains without further prompts.
+
+- `talispam whitelist clean` removes addresses containing `bounce` (including `bounces`) or a UUID, ignoring case, and saves a backup before changes.
+
 ## 0.4.3 (2026-10-18)
 
 **[compare](https://github.com/saidone75/talispam/compare/v0.4.2...v0.4.3)**

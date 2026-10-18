@@ -76,30 +76,32 @@
     (println (str "  ... and " (- (count examples) 3) " more")))
   (println (str "Proposed entry: @" domain " (all senders on this exact host)"))
   (loop []
-    (print "Merge? [y/N] (q to cancel): ")
+    (print "Merge? [y/N/A] (A for all, q to cancel): ")
     (flush)
     (let [answer (some-> (read-line) s/trim s/lower-case)]
       (cond
         (or (nil? answer) (#{"q" "quit"} answer))
         (throw (ex-info "Compaction cancelled; whitelist was not saved." {}))
+        (#{"a" "all"} answer) :all
         (#{"y" "yes" "s" "si" "sì"} answer) true
         (#{"" "n" "no"} answer) false
-        :else (do (println "Please answer y or n, or q to cancel.") (recur))))))
+        :else (do (println "Please answer y, n or A for all, or q to cancel.") (recur))))))
 
 (defn- choose-domains [entries]
   (let [normalized (compact-entries entries)
         groups (group-by #(address-domain (normalize-entry %)) entries)]
-    (reduce (fn [approved [domain examples]]
-              (if (confirm-domain? domain examples)
-                (conj approved domain)
-                approved))
-            #{}
+    (:approved
+     (reduce (fn [{:keys [approved all?]} [domain examples]]
+               (let [answer (if all? :all (confirm-domain? domain examples))]
+                 {:approved (if answer (conj approved domain) approved)
+                  :all? (= :all answer)}))
+            {:approved #{} :all? false}
             (sort-by key
                      (filter (fn [[domain examples]]
                                (and domain
                                     (> (count (set (map normalize-entry examples))) 1)
                                     (not (contains? normalized (str "@" domain)))))
-                             groups)))))
+                             groups))))))
 
 (defn- whitelist-file ^java.io.File []
   (io/file (get-in @c/config [:whitelist :location])))
@@ -130,6 +132,23 @@
         (io/copy file backup)
         (save-whitelist! after)
         (println (str "Compacted whitelist: " (count before) " -> " (count after) " entries."))
+        (println (str "Backup: " backup))))))
+
+(defn clean [_]
+  (load-whitelist)
+  (let [before @whitelist
+        after (into #{} (remove #(and (address-domain %)
+                                     (re-find #"(?i)bounce|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}" %))) before)
+        file (whitelist-file)]
+    (if (= before after)
+      (println "No whitelist changes.")
+      (let [backup (java.io.File/createTempFile
+                    (str (.getName file) "-") ".bak"
+                    (.getParentFile (.getAbsoluteFile file)))]
+        (io/copy file backup)
+        (save-whitelist! after)
+        (println (str "Removed " (- (count before) (count after)) " whitelist addresses; "
+                      (count after) " entries remain."))
         (println (str "Backup: " backup))))))
 
 (defn print-whitelist [_]
