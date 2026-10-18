@@ -169,6 +169,20 @@ $ cat .talispam/easy_ham/02051.58e196144807bd76d7b77d4b7efb6d32 | talispam score
 $ cat .talispam/spam/00460.8996dc28ab56dd7b6f35b956deceaf22 | talispam score
 98
 ```
+Inspect why a message receives its classification:
+```console
+$ talispam explain < message.eml
+```
+`explain` reports the score on the same 0–100 scale as `score`, the configured
+threshold (default 70), whitelist status (`disabled`, `matched`, or `not matched`),
+and the resulting ham/spam classification. A message is spam when its rounded
+score exceeds the threshold and its sender is not whitelisted.
+It lists each distinct recognized word alphabetically, with ham/spam training
+message counts and its smoothed Bayesian spam probability on a 0–1 scale.
+The same MIME parsing and optional dictionary filtering used by `score` apply;
+unknown words are omitted. With no recognized words, the score is 50.
+Word probabilities are clues, not exact additive contributions to the Fisher score.
+
 ### Compatibility
 I imagined it as a drop-in replacement for SpamAssassin on my personal mail server: invoked without arguments will add the same spam identification header and return the message to stdout:
 ```console
@@ -206,6 +220,7 @@ VERSION:
 COMMANDS:
    learn                train talispam classifier
    score                print ham/spam score for stdin
+   explain              explain the classification of stdin
    whitelist            manage trusted senders (ham, clean, compact, edit, print)
    init                 create default configuration and download dictionaries
    db                   inspect the classifier database (print, info)

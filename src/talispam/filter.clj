@@ -87,21 +87,37 @@
    (* -2.0 (reduce + 0.0 (map #(Math/log (double %)) probs)))
    (* 2 number-of-probs)))
 
+(defn- recognized-words [text]
+  (->> (extract-words text)
+       (map keyword)
+       distinct
+       (filter #(contains? @db/words %))))
+
+(defn- combined-score [spam-probs]
+  (let [number-of-probs (count spam-probs)]
+    (if (zero? number-of-probs)
+      0.5
+      (/ (+ (fisher spam-probs number-of-probs)
+            (- 1 (fisher (map #(- 1 %) spam-probs) number-of-probs)))
+         2.0))))
+
 (defn score [text]
   ;; training holds the same lock so scoring never reads a partial rebuild
   (locking db/words
-    (let [words (->> (extract-words text)
-                     (map keyword)
-                     distinct
-                     (filter #(contains? @db/words %)))
-          spam-probs (map bayesian-spam-probability words)
-          ham-probs (map #(- 1 %) spam-probs)
-          number-of-probs (count words)]
-      (if (zero? number-of-probs)
-        0.5
-        (/ (+ (fisher spam-probs number-of-probs)
-              (- 1 (fisher ham-probs number-of-probs)))
-           2.0)))))
+    (combined-score (mapv bayesian-spam-probability (recognized-words text)))))
+
+(defn explain
+  "Return the Fisher score and distinct recognized words from one database snapshot.
+  Word probabilities are clues, not additive contributions to the Fisher score."
+  [text]
+  (locking db/words
+    (let [words (mapv (fn [word]
+                        (let [[ham spam] (get @db/words word)]
+                          {:word (name word) :ham-count ham :spam-count spam
+                           :probability (bayesian-spam-probability word)}))
+                      (sort (recognized-words text)))]
+      {:score (combined-score (mapv :probability words))
+       :words words})))
 
 ;; build a new classifier db
 (defn learn []
