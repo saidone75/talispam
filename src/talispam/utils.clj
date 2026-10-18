@@ -1,3 +1,12 @@
+;
+; talispam — A charm to avert spam and bring good messages.
+;
+; Copyright (c) 2020-2026 Saidone
+; SPDX-License-Identifier: MIT
+;
+; See LICENSE in the project root for the full license text.
+;
+
 (ns talispam.utils
   (:gen-class))
 
