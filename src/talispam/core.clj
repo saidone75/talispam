@@ -64,6 +64,39 @@
 (defn- classify-score [parms]
   (classify *in* 'score))
 
+(defn- explain [_]
+  (load-db)
+  (let [message (slurp *in*)
+        {:keys [score words]} (f/explain message)
+        score (Math/round ^Float (* 100 score))
+        threshold (or (:spam-threshold @c/config) 70)
+        whitelist-enabled (get-in @c/config [:whitelist :use])
+        whitelisted (and whitelist-enabled (w/whitelisted? (utils/get-sender message)))]
+    (println "Score:" score)
+    (println "Threshold:" threshold)
+    (println "Whitelist:" (cond (not whitelist-enabled) "disabled"
+                                whitelisted "matched"
+                                :else "not matched"))
+    (println "Classification:" (if (and (not whitelisted) (> score threshold)) "spam" "ham"))
+    (println "Recognized words:" (count words))
+    (println)
+    (let [rows (into [["Word" "Ham count" "Spam count" "Spam probability"]]
+                     (map (fn [{:keys [word ham-count spam-count probability]}]
+                            [word (str ham-count) (str spam-count) (format "%.6f" probability)]))
+                     words)
+          widths (apply mapv (fn [& cells] (apply max (map count cells))) rows)
+          row-format (str "| %-" (nth widths 0) "s | %" (nth widths 1)
+                          "s | %" (nth widths 2) "s | %" (nth widths 3) "s |")
+          border (str "+" (s/join "+" (map #(apply str (repeat (+ % 2) "-")) widths)) "+")]
+      (println border)
+      (println (apply format row-format (first rows)))
+      (println border)
+      (doseq [row (rest rows)]
+        (println (apply format row-format row)))
+      (println border))
+    (println)
+    (println "Word probabilities are clues, not exact additive contributions to the Fisher score.")))
+
 (defn- print-db [parms]
   (load-db)
   (println
@@ -109,6 +142,10 @@
                   :description ["print ham/spam score for stdin"]
                   :opts []
                   :runs        classify-score}
+                 {:command     "explain"
+                  :description ["explain the classification of stdin"]
+                  :opts []
+                  :runs explain}
                  {:command     "whitelist"
                   :description ["manage trusted senders"]
                   :subcommands [{:command "ham"
@@ -147,7 +184,7 @@
   (when-not (or (= "init" (first args)) (some #{"--help" "-?"} args))
     (try
       (c/load-config (utils/expand-home "~/.talispam/talispam.cfg.edn"))
-      (when (and (or (nil? args) (= "score" (first args)) (= "learn" (first args)))
+      (when (and (or (nil? args) (= "score" (first args)) (= "explain" (first args)) (= "learn" (first args)))
                  (get-in @c/config [:dictionary :use]))
         (dict/load-dictionary!))
       (catch Exception e (exit 1 (.getMessage e)))))
