@@ -114,6 +114,9 @@
                   :subcommands [{:command "ham"
                                  :description ["add senders from the ham corpus and save the whitelist"]
                                  :opts [] :runs w/ham}
+                                {:command "clean"
+                                 :description ["remove addresses containing bounce or a UUID, with backup"]
+                                 :opts [] :runs w/clean}
                                 {:command "compact"
                                  :description ["interactively merge senders by domain, with backup"]
                                  :opts [] :runs w/compact}
