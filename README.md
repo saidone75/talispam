@@ -18,57 +18,32 @@ A program held to act as a charm to avert spam and bring good messages.
 
 #### Local build
 
-Install Java (JDK 25 is used in CI) and the official [Clojure CLI](https://clojure.org/guides/install_clojure).
-Your `clojure` package may provide only the language launcher, which does not support `deps.edn`, `-M`, or `-T`.
-Verify your installation:
-```console
-$ clojure -Sdescribe
-```
-This must print CLI configuration information. If it reports
-`-Sdescribe (No such file or directory)` or `-T:build (No such file or directory)`,
-install the official CLI. On Linux, with Java, Bash, curl, and rlwrap installed:
-```sh
-curl -fL https://github.com/clojure/brew-install/releases/latest/download/linux-install.sh -o /tmp/clojure-linux-install.sh
-chmod +x /tmp/clojure-linux-install.sh
-sudo /tmp/clojure-linux-install.sh
-hash -r
-clojure -Sdescribe
-```
-The installer places `clojure` in `/usr/local/bin`; ensure that directory precedes
-`/usr/bin` in your `PATH` if the old launcher is still selected.
+Requires Java (JDK 25 is used in CI) and the official [Clojure CLI](https://clojure.org/guides/install_clojure).
+Verify the CLI with `clojure -Sdescribe`; a plain Clojure language launcher does not support `-M` or `-T`.
 
-Then get the sources:
+Clone, test and build the executable uberjar:
 ```console
 $ git clone https://github.com/saidone75/talispam.git
 $ cd talispam
-```
-Run the tests and produce an executable uberjar with tools.build:
-```console
 $ clojure -M:test
 $ clojure -T:build uber
 $ java -jar target/uberjar/talispam-0.5.0-standalone.jar --help
 ```
-Run directly from source with `clojure -M:run --help`, or start a REPL with `clojure`.
-Project metadata (including the version) lives in `resources/talispam.edn`.
-Use `clojure -T:build clean` to remove build artifacts.
 
-Create a native binary (*requires GraalVM with `native-image` on PATH*):
+For a native executable, install GraalVM with `native-image` on `PATH`, then run:
 ```console
 $ clojure -T:build native-image
 ```
-Copy `target/talispam-0.5.0` somewhere in your path, renaming it to `talispam` for the commands below. Optional build parameters:
-```console
-$ clojure -T:build native-image :optimization "b" :march "native"
-```
-The uberjar is built with AOT compilation and direct linking, following the
-[tools.build application guide](https://clojure.org/guides/tools_build).
+Copy `target/talispam-0.5.0` to a directory on your `PATH` as `talispam`.
+Optional build parameters: `:optimization "b" :march "native"`.
+Artifact filenames use the version in `resources/talispam.edn`.
 
 ### Build with Docker (GraalVM)
 Only Docker with Compose and BuildKit is required on the host. The build uses
 the GraalVM version specified in [docker/Dockerfile](docker/Dockerfile)
 and Clojure CLI with tools.build to compile an uberjar and then a native executable.
 
-On Windows, from any directory:
+From the repository root, on Windows:
 ```bat
 build-docker.bat
 ```
@@ -154,19 +129,23 @@ falling back to `vi`; editor arguments are supported. `print` prints the saved
 entries without scanning the corpus. These commands do not need a trained database
 or compiled dictionary. Whitelist matching is enabled by `:whitelist :use`;
 the file path is set by `:whitelist :location`.
+Sender matching reads the address from the leading mbox `From ` envelope line;
+a message containing only an RFC `From:` header does not match the whitelist.
+Whitelist matches leave the numeric score unchanged and set `X-Spam-Flag` to
+`*** sender whitelisted ***`.
 
-train bayesian classifier:
+Train the Bayesian classifier:
 ```console
 $ talispam learn
 building classifier db ✓
 done!
 ```
-### Test
-print spam/ham score (lower score is ham, higher is spam)
+### Classify messages
+Print the spam score (0–100; lower scores indicate ham):
 ```console
-$ cat .talispam/easy_ham/02051.58e196144807bd76d7b77d4b7efb6d32 | talispam score
+$ cat ~/.talispam/easy_ham/02051.58e196144807bd76d7b77d4b7efb6d32 | talispam score
 14
-$ cat .talispam/spam/00460.8996dc28ab56dd7b6f35b956deceaf22 | talispam score
+$ cat ~/.talispam/spam/00460.8996dc28ab56dd7b6f35b956deceaf22 | talispam score
 98
 ```
 Inspect why a message receives its classification:
@@ -184,16 +163,18 @@ unknown words are omitted. With no recognized words, the score is 50.
 Word probabilities are clues, not exact additive contributions to the Fisher score.
 
 ### Compatibility
-I imagined it as a drop-in replacement for SpamAssassin on my personal mail server: invoked without arguments will add the same spam identification header and return the message to stdout:
+Invoked without arguments, Talispam adds `X-Spam-Checker-Version`,
+`X-Spam-Flag` and `X-Spam-Score` headers and writes the message to standard output.
+The first line is preserved for mbox compatibility:
 ```console
-$ cat .talispam/spam/00460.8996dc28ab56dd7b6f35b956deceaf22 | talispam | head -n 5
+$ cat ~/.talispam/spam/00460.8996dc28ab56dd7b6f35b956deceaf22 | talispam | head -n 5
 From ilug-admin@linux.ie  Wed Sep 25 10:29:22 2002
 X-Spam-Checker-Version: talispam 0.5.0 on kugelmass
 X-Spam-Flag: YES
 X-Spam-Score: 98
 Return-Path: <ilug-admin@linux.ie>
 ```
-integration with procmail is pretty much the same as well, just add these lines on your .procmailrc:
+To integrate with procmail, add these lines to `~/.procmailrc`:
 ```
 :0fw
 | talispam
@@ -221,14 +202,16 @@ COMMANDS:
    learn                train talispam classifier
    score                print ham/spam score for stdin
    explain              explain the classification of stdin
-   whitelist            manage trusted senders (ham, clean, compact, edit, print)
+   whitelist            manage trusted senders
    init                 create default configuration and download dictionaries
-   db                   inspect the classifier database (print, info)
+   db                   inspect the classifier database
    stats                print stats summary for a mbox
 
 GLOBAL OPTIONS:
    -?, --help
 ```
+Use `talispam whitelist --help` or `talispam db --help` to list subcommands.
+
 Inspect the trained classifier database with:
 ```console
 $ talispam db print
@@ -246,8 +229,17 @@ in the database, and its on-disk size in bytes. The numbers above are examples.
 Both commands use the database configured under `:filter-db :location` and do
 not require a dictionary. The `print-db` command has been removed.
 
+Calculate score statistics for an mbox file:
+```console
+$ talispam stats --mbox /path/to/mailbox.mbox
+```
+`stats` requires a trained database and an mbox file beginning with a `From `
+envelope line. Its statistics use raw scores on a 0–1 scale.
+
 ### Performance
-on my little mail server (Intel Atom D2550 @ 1.86GHz) is extraordinarily fast, expecially in comparison with SpamAssassin (to be honest, not directly comparable because SpamAssassin perform a lot more checks):
+The following measurements compare Talispam with SpamAssassin on an Intel Atom
+D2550 @ 1.86 GHz. The results are not directly comparable because SpamAssassin
+performs more checks:
 ```console
 $ time cat .talispam/spam/00460.8996dc28ab56dd7b6f35b956deceaf22 | spamassassin | head -n 5
 From ilug-admin@linux.ie  Wed Sep 25 10:29:22 2002
