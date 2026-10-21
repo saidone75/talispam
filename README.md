@@ -169,7 +169,7 @@ The first line is preserved for mbox compatibility:
 ```console
 $ cat ~/.talispam/spam/00460.8996dc28ab56dd7b6f35b956deceaf22 | talispam | head -n 5
 From ilug-admin@linux.ie  Wed Sep 25 10:29:22 2002
-X-Spam-Checker-Version: talispam 0.5.0 on kugelmass
+X-Spam-Checker-Version: talispam 0.3.0 on kugelmass
 X-Spam-Flag: YES
 X-Spam-Score: 98
 Return-Path: <ilug-admin@linux.ie>
