@@ -2,13 +2,23 @@
 
 ## Unreleased
 
-**[compare](https://github.com/saidone75/talispam/compare/v0.4.3...HEAD)**
+**[compare](https://github.com/saidone75/talispam/compare/v0.5.0...HEAD)**
+
+## 0.5.0 (2026-10-21)
+
+**[compare](https://github.com/saidone75/talispam/compare/v0.4.3...v0.5.0)**
 
 ### Added
+
+- `talispam explain` reads a message from standard input and reports its classification, score, threshold, whitelist status and the words contributing to the score.
 
 - `talispam whitelist compact` accepts `A` to approve the current and all remaining domains without further prompts.
 
 - `talispam whitelist clean` removes addresses containing `bounce` (including `bounces`) or a UUID, ignoring case, and saves a backup before changes.
+
+### Changed
+
+- Remove obsolete GraalVM reflection configuration from local and Docker native builds.
 
 ## 0.4.3 (2026-10-18)
 

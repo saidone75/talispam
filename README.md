@@ -1,5 +1,5 @@
-# talispam
-a talispam is a program held to act as a charm to avert spam and bring good messages
+# Talispam
+A program held to act as a charm to avert spam and bring good messages.
 
 [![talispam.png](https://i.postimg.cc/KYZyT1M7/talispam.png)](https://postimg.cc/tsmfQCD7)
 
@@ -12,8 +12,8 @@ a talispam is a program held to act as a charm to avert spam and bring good mess
 | `clojure` | Start a REPL. |
 | `clojure -M:run --help` | Run the application from source. |
 | `clojure -M:test` | Run all tests; exit with a nonzero status on failure. |
-| `clojure -T:build uber` | Build `target/uberjar/talispam-0.4.2-standalone.jar` with AOT compilation. |
-| `clojure -T:build native-image` | Build the uberjar and then the native executable `target/talispam-0.4.2` (requires GraalVM). |
+| `clojure -T:build uber` | Build `target/uberjar/talispam-0.5.0-standalone.jar` with AOT compilation. |
+| `clojure -T:build native-image` | Build the uberjar and then the native executable `target/talispam-0.5.0` (requires GraalVM). |
 | `clojure -T:build clean` | Remove `target/` and its build artifacts. |
 
 #### Local build
@@ -46,7 +46,7 @@ Run the tests and produce an executable uberjar with tools.build:
 ```console
 $ clojure -M:test
 $ clojure -T:build uber
-$ java -jar target/uberjar/talispam-0.4.2-standalone.jar --help
+$ java -jar target/uberjar/talispam-0.5.0-standalone.jar --help
 ```
 Run directly from source with `clojure -M:run --help`, or start a REPL with `clojure`.
 Project metadata (including the version) lives in `resources/talispam.edn`.
@@ -56,7 +56,7 @@ Create a native binary (*requires GraalVM with `native-image` on PATH*):
 ```console
 $ clojure -T:build native-image
 ```
-Copy `target/talispam-0.4.2` somewhere in your path, renaming it to `talispam` for the commands below. Optional build parameters:
+Copy `target/talispam-0.5.0` somewhere in your path, renaming it to `talispam` for the commands below. Optional build parameters:
 ```console
 $ clojure -T:build native-image :optimization "b" :march "native"
 ```
@@ -76,7 +76,7 @@ On Linux/macOS:
 ```console
 $ ./build-docker.sh
 ```
-Both scripts run the build directly without arguments and produce `dist/talispam-0.4.2`, a **Linux** executable.
+Both scripts run the build directly without arguments and produce `dist/talispam-0.5.0`, a **Linux** executable.
 The filename uses the version in `resources/talispam.edn`.
 Copy it to the target Linux machine as `talispam` and configure `~/.talispam` as described below.
 
@@ -188,7 +188,7 @@ I imagined it as a drop-in replacement for SpamAssassin on my personal mail serv
 ```console
 $ cat .talispam/spam/00460.8996dc28ab56dd7b6f35b956deceaf22 | talispam | head -n 5
 From ilug-admin@linux.ie  Wed Sep 25 10:29:22 2002
-X-Spam-Checker-Version: talispam 0.4.2 on kugelmass
+X-Spam-Checker-Version: talispam 0.5.0 on kugelmass
 X-Spam-Flag: YES
 X-Spam-Score: 98
 Return-Path: <ilug-admin@linux.ie>
@@ -215,7 +215,7 @@ USAGE:
  talispam [global-options] command [command options] [arguments...]
 
 VERSION:
- 0.4.2
+ 0.5.0
 
 COMMANDS:
    learn                train talispam classifier
