@@ -30,6 +30,9 @@ cd -- "$SCRIPT_DIR"
 
 COMPOSE_CMD=(docker compose -f docker/docker-compose.yml)
 
+rm -rf -- "$SCRIPT_DIR/dist"
+mkdir -p -- "$SCRIPT_DIR/dist"
+
 "${COMPOSE_CMD[@]}" build "${BUILD_OPTIONS[@]}" build
 "${COMPOSE_CMD[@]}" run --rm --no-deps build
 printf 'Linux native executable created in: %s/dist/ (talispam-<version>)\n' "$SCRIPT_DIR"

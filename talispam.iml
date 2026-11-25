@@ -32,7 +32,7 @@
     <orderEntry type="library" name="Deps: io.github.cognitect-labs/test-runner:dfb30d" level="project" />
     <orderEntry type="library" name="Deps: javax.activation/javax.activation-api:1.2.0" level="project" />
     <orderEntry type="library" name="Deps: javax.xml.bind/jaxb-api:2.4.0-b180830.0359" level="project" />
-    <orderEntry type="library" name="Deps: org.clojure/clojure:1.12.6" level="project" />
+    <orderEntry type="library" name="Deps: org.clojure/clojure:1.12.7" level="project" />
     <orderEntry type="library" name="Deps: org.clojure/clojurescript:1.9.293" level="project" />
     <orderEntry type="library" name="Deps: org.clojure/core.async:1.2.603" level="project" />
     <orderEntry type="library" name="Deps: org.clojure/core.cache:0.8.2" level="project" />

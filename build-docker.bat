@@ -26,6 +26,11 @@ IF ERRORLEVEL 1 EXIT /B 1
 SET "COMPOSE_CMD=docker compose -f docker\docker-compose.yml"
 SET "RESULT=0"
 
+IF EXIST "dist" RMDIR /S /Q "dist"
+IF EXIST "dist" GOTO FAILED
+MKDIR "dist"
+IF ERRORLEVEL 1 GOTO FAILED
+
 %COMPOSE_CMD% build %BUILD_OPTIONS% build
 IF ERRORLEVEL 1 GOTO FAILED
 %COMPOSE_CMD% run --rm --no-deps build
