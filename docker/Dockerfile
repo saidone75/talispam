@@ -1,9 +1,9 @@
 # syntax=docker/dockerfile:1
 
-ARG GRAALVM_IMAGE=ghcr.io/graalvm/native-image-community:25i4
+ARG GRAALVM_IMAGE=ghcr.io/graalvm/native-image-community:25i6
 FROM ${GRAALVM_IMAGE} AS builder
 
-ARG CLOJURE_CLI_VERSION=1.12.5.1664
+ARG CLOJURE_CLI_VERSION=1.12.7.1681
 ARG NATIVE_OPTIMIZATION=s
 ARG NATIVE_MARCH=compatibility
 WORKDIR /application
